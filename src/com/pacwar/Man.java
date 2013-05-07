@@ -3,7 +3,7 @@ package com.pacwar;
 import android.graphics.Point;
 
 public class Man {
-	int  color, type, index;
+	int color, type, index;
 
 	// Position.
 	public float x;
@@ -16,9 +16,9 @@ public class Man {
 	public Point[] next;
 	public int current_point_to_go;
 	// Velocity.
-	public float velocityX = 1;
-	public float velocityY = 1;
-	public float velocityZ = 1;
+	public float velocityX = 2;
+	public float velocityY = 2;
+	public float velocityZ = 2;
 
 	// Size.
 	public float width;
@@ -32,13 +32,12 @@ public class Man {
 		if (Math.abs(y - destY) < velocityY)
 			yb = true;
 		if (!xb) {
-			if (x < destX){
+			if (x < destX) {
 				x += velocityX;
-				cenX+=velocityX;
-			}
-			else if (x > destX){
+				cenX += velocityX;
+			} else if (x > destX) {
 				x -= velocityX;
-				cenX-=velocityX;
+				cenX -= velocityX;
 			}
 		}
 		if (!yb) {

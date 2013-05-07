@@ -126,8 +126,9 @@ public class GameState implements Runnable {
 			for (int k = 0; k < 4; k++) {
 				nx = cur.x + dx[k];
 				ny = cur.y + dy[k];
-				if (nx < 0 || nx >= map[0].length || ny < 0 || ny >= map.length
-						|| vis[nx][ny] || !map[nx][ny])
+				if (nx < 0 || nx >= Global.MAP_HEIGHT || ny < 0
+						|| ny >= Global.MAP_WIDTH || vis[nx][ny]
+						|| !map[nx][ny])
 					continue;
 				vis[cur.x][cur.y] = true;
 				q.add(new state(nx, ny, cur, cur.d + 1));
@@ -179,7 +180,8 @@ public class GameState implements Runnable {
 				return;
 			Man man = pl1_men.get(selectedMan);
 			Point p = getPoint(x, y);
-			man.next = findPath((int)(man.y/cell_h), (int)(man.x/cell_w), p.x, p.y);
+			man.next = findPath((int) (man.cenY / cell_h),
+					(int) (man.cenX / cell_w), p.x, p.y);
 			man.current_point_to_go = 1;
 			man.destX = man.next[0].y * Global.CELL_WIDTH;
 			man.destY = man.next[0].x * Global.CELL_HEIGHT;
@@ -198,7 +200,8 @@ public class GameState implements Runnable {
 		for (int i = 0; i < 8; i++) {
 			nx = xMap + dx[i];
 			ny = yMap + dy[i];
-			if (nx < 0 || nx >= map.length || ny < 0 || ny >= map[0].length)
+			if (nx < 0 || nx >= Global.MAP_HEIGHT || ny < 0
+					|| ny >= Global.MAP_WIDTH)
 				continue;
 			if (map[nx][ny])
 				return new Point(nx, ny);

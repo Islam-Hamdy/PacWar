@@ -146,8 +146,8 @@ public class GameState implements Runnable {
 	int selectedMan;
 
 	public void SceneTouch(float x, float y) {
-		int xMap = (int) (x / Global.CELL_WIDTH);
-		int yMap = (int) (y / Global.CELL_HEIGHT);
+		int yMap = (int) (x / Global.CELL_WIDTH);
+		int xMap = (int) (y / Global.CELL_HEIGHT);
 
 		int manClicked = pac;
 		float min = 1 << 27, tmp;
@@ -183,16 +183,16 @@ public class GameState implements Runnable {
 			Point p = getPoint(x, y);
 			man.next = findPath(man.xMap, man.yMap, p.x, p.y);
 			man.current_point_to_go = 1;
-			man.destX = man.next[0].x * Global.CELL_WIDTH;
-			man.destY = man.next[0].y * Global.CELL_HEIGHT;
+			man.destX = man.next[0].y * Global.CELL_WIDTH;
+			man.destY = man.next[0].x * Global.CELL_HEIGHT;
 			clickState = select;
 		}
 		System.out.println(2 + " " + clickState);
 	}
 
 	public Point getPoint(float x, float y) {
-		int xMap = (int) (x / Global.CELL_WIDTH);
-		int yMap = (int) (y / Global.CELL_HEIGHT);
+		int yMap = (int) (x / Global.CELL_WIDTH);
+		int xMap = (int) (y / Global.CELL_HEIGHT);
 		System.out.println("=============" + xMap + "   " + yMap);
 		if (map[xMap][yMap])
 			return new Point(xMap, yMap);

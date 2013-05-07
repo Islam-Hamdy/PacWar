@@ -104,8 +104,8 @@ public class MainActivity extends E3Activity {
 				// scene.getSceneEventX,Y
 				// because MotionEvent's getX() and getY() returns pixel
 				// position of the actual device.
-				int y = getTouchEventX(scene, motionEvent);
-				int x = getTouchEventY(scene, motionEvent);
+				int x = getTouchEventX(scene, motionEvent);
+				int y = getTouchEventY(scene, motionEvent);
 				System.out.println("++++++:" + x + "  " + y);
 				model.SceneTouch(x, y);
 				// pacManSprite.move(x, y);

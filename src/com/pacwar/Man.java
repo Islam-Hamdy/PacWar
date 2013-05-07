@@ -32,25 +32,31 @@ public class Man {
 		if (Math.abs(y - destY) < velocityY)
 			yb = true;
 		if (!xb) {
-			if (x < destX)
+			if (x < destX){
 				x += velocityX;
-			else if (x > destX)
+				cenX+=velocityX;
+			}
+			else if (x > destX){
 				x -= velocityX;
+				cenY-=velocityX;
+			}
 		}
 		if (!yb) {
-			if (y < destY)
+			if (y < destY) {
 				y += velocityY;
-			else if (y > destY)
+				cenY += velocityY;
+			} else if (y > destY) {
 				y -= velocityY;
+				cenY -= velocityY;
+			}
 		}
 		x = Math.max(x, 0);
 		y = Math.max(y, 0);
-
 		if (next != null && xb && yb && current_point_to_go < next.length) {
 			if (current_point_to_go < next.length - 1) {
 				current_point_to_go++;
-				destX = next[current_point_to_go].x * Global.CELL_WIDTH;
-				destY = next[current_point_to_go].y * Global.CELL_HEIGHT;
+				destX = next[current_point_to_go].y * Global.CELL_WIDTH;
+				destY = next[current_point_to_go].x * Global.CELL_HEIGHT;
 			}
 		}
 	}

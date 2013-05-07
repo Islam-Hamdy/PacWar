@@ -23,6 +23,60 @@ public class MainActivity extends E3Activity {
 	private static int pacmans_no = Global.PAC_INIT;
 	private static int ghosts_no = Global.GHOST_INIT;
 
+	@SuppressWarnings("unchecked")
+	private void initializeGame() throws IOException {
+		int bgwidth = 164, bgheight = 212;
+		Sprite bg = new Sprite(new TiledTexture("bg.png", bgwidth, bgheight,
+				this), getWidth() / 2 - bgwidth / 2, getHeight() / 2 - bgheight
+				/ 2);
+		bg.scale((float) (getWidth() * 1.0 / bgwidth),
+				(float) (getHeight() * 1.0 / bgheight));
+		scene.getTopLayer().add(bg);
+
+		int centerX = (getWidth() - pacman_texture.getTileWidth()) / 2;
+		int centerY = (getHeight() - pacman_texture.getTileHeight()) / 2;
+
+		// Add animation frames from tile.
+		ArrayList<AnimatedSprite.Frame>[] pacman_frames = new ArrayList[pacmans_no];
+
+		pacManSprite = new AnimatedSprite[pacmans_no];
+		for (int i = 0; i < pacmans_no; i++) {
+			pacman_frames[i] = new ArrayList<AnimatedSprite.Frame>();
+			pacman_frames[i].add(new AnimatedSprite.Frame(2, i));
+			pacman_frames[i].add(new AnimatedSprite.Frame(1, i));
+			pacman_frames[i].add(new AnimatedSprite.Frame(0, i));
+
+			pacManSprite[i] = new AnimatedSprite(pacman_texture, 0, 0);
+			// pacManSprite[i].scale(1, 1);
+			// Start animation with 500msec, infinite loop.
+			pacManSprite[i].animate(500, pacman_frames[i]);
+			scene.getTopLayer().add(pacManSprite[i]);
+			pacManSprite[i].setVisible(false);
+		}
+
+		ArrayList<AnimatedSprite.Frame> frames2 = new ArrayList<AnimatedSprite.Frame>();
+		frames2.add(new AnimatedSprite.Frame(0, 4));
+		frames2.add(new AnimatedSprite.Frame(1, 4));
+		frames2.add(new AnimatedSprite.Frame(2, 4));
+		frames2.add(new AnimatedSprite.Frame(3, 4));
+
+		ghostSprite = new AnimatedSprite[ghosts_no];
+		for (int i = 0; i < ghosts_no; i++) {
+			ghostSprite[i] = new AnimatedSprite(ghosts_texture, centerX,
+					centerY);
+			// ghostSprite[i].scale(2, 2);
+			ghostSprite[i].animate(500, frames2);
+			scene.getTopLayer().add(ghostSprite[i]);
+			ghostSprite[i].setVisible(false);
+		}
+
+		scene.setBackgroundColor(0.94f, 1.00f, 0.94f, 1);
+		// Toast.makeText(this, "Touch screen to move the sprite.",
+		// Toast.LENGTH_LONG).show();
+
+		model = new GameState(this);
+	}
+
 	@Override
 	public E3Engine onLoadEngine() {
 
@@ -51,10 +105,20 @@ public class MainActivity extends E3Activity {
 		return scene;
 	}
 
+	private int pacman_real_w, pacman_real_h;
+	private int pacman_shift_w, pacman_shift_h;
+	private float ghost_scale_w, ghost_scale_h;
+
 	public void show_pacman(int color, int x, int y, int w, int h) {
+		pacman_real_w = w;
+		pacman_real_h = h;
+
+		pacman_shift_w = (int) Math.round(pacman_real_w / 2.0 - pac_w / 2.0);
+		pacman_shift_h = (int) Math.round(pacman_real_h / 2.0 - pac_h / 2.0);
+
 		pacManSprite[color].scale((float) (w * 1.0 / pac_w),
 				(float) (h * 1.0 / pac_h));
-		pacManSprite[color].move(x, y);
+		pacManSprite[color].move(100, 100);
 		pacManSprite[color].setVisible(true);
 	}
 
@@ -63,7 +127,7 @@ public class MainActivity extends E3Activity {
 	}
 
 	public void move_pacman(int color, int x, int y) {
-		pacManSprite[color].move(x, y);
+		pacManSprite[color].move(pacman_shift_w + x, pacman_shift_h + y);
 	}
 
 	public void show_ghost(int color, int x, int h, int w, int y) {
@@ -117,60 +181,6 @@ public class MainActivity extends E3Activity {
 		}
 
 		return false;
-	}
-
-	@SuppressWarnings("unchecked")
-	private void initializeGame() throws IOException {
-		int bgwidth = 164, bgheight = 212;
-		Sprite bg = new Sprite(new TiledTexture("bg.png", bgwidth, bgheight,
-				this), getWidth() / 2 - bgwidth / 2, getHeight() / 2 - bgheight
-				/ 2);
-		bg.scale((float) (getWidth() * 1.0 / bgwidth),
-				(float) (getHeight() * 1.0 / bgheight));
-		scene.getTopLayer().add(bg);
-
-		int centerX = (getWidth() - pacman_texture.getTileWidth()) / 2;
-		int centerY = (getHeight() - pacman_texture.getTileHeight()) / 2;
-
-		// Add animation frames from tile.
-		ArrayList<AnimatedSprite.Frame>[] pacman_frames = new ArrayList[pacmans_no];
-
-		pacManSprite = new AnimatedSprite[pacmans_no];
-		for (int i = 0; i < pacmans_no; i++) {
-			pacman_frames[i] = new ArrayList<AnimatedSprite.Frame>();
-			pacman_frames[i].add(new AnimatedSprite.Frame(2, i));
-			pacman_frames[i].add(new AnimatedSprite.Frame(1, i));
-			pacman_frames[i].add(new AnimatedSprite.Frame(0, i));
-
-			pacManSprite[i] = new AnimatedSprite(pacman_texture, 0, 0);
-			// pacManSprite[i].scale(1, 1);
-			// Start animation with 500msec, infinite loop.
-			pacManSprite[i].animate(500, pacman_frames[i]);
-			scene.getTopLayer().add(pacManSprite[i]);
-			pacManSprite[i].setVisible(false);
-		}
-
-		ArrayList<AnimatedSprite.Frame> frames2 = new ArrayList<AnimatedSprite.Frame>();
-		frames2.add(new AnimatedSprite.Frame(0, 4));
-		frames2.add(new AnimatedSprite.Frame(1, 4));
-		frames2.add(new AnimatedSprite.Frame(2, 4));
-		frames2.add(new AnimatedSprite.Frame(3, 4));
-
-		ghostSprite = new AnimatedSprite[ghosts_no];
-		for (int i = 0; i < ghosts_no; i++) {
-			ghostSprite[i] = new AnimatedSprite(ghosts_texture, centerX,
-					centerY);
-			// ghostSprite[i].scale(2, 2);
-			ghostSprite[i].animate(500, frames2);
-			scene.getTopLayer().add(ghostSprite[i]);
-			ghostSprite[i].setVisible(false);
-		}
-
-		scene.setBackgroundColor(0.94f, 1.00f, 0.94f, 1);
-		// Toast.makeText(this, "Touch screen to move the sprite.",
-		// Toast.LENGTH_LONG).show();
-
-		model = new GameState(this);
 	}
 
 }

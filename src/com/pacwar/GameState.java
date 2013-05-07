@@ -183,8 +183,8 @@ public class GameState implements Runnable {
 			man.next = findPath((int) (man.cenY / cell_h),
 					(int) (man.cenX / cell_w), p.x, p.y);
 			man.current_point_to_go = 1;
-			man.destX = man.next[0].y * Global.CELL_WIDTH;
-			man.destY = man.next[0].x * Global.CELL_HEIGHT;
+			man.destX = (man.next[0].y - 1) * Global.CELL_WIDTH;
+			man.destY = (man.next[0].x - 1) * Global.CELL_HEIGHT;
 			clickState = select;
 		}
 		System.out.println(2 + " " + clickState);
@@ -218,8 +218,13 @@ public class GameState implements Runnable {
 		while (true) {
 			for (int i = 0; i < pl1_men.size(); i++) {
 				pl1_men.get(i).updateMe();
-				view.move_pacman(pl1_men.get(i).color, (int) pl1_men.get(i).x,
-						(int) pl1_men.get(i).y);
+				view.move_pacman(pl1_men.get(i).color,
+						(int) (pl1_men.get(i).x), (int) (pl1_men.get(i).y));
+
+				// just test
+				// view.move_pacman(pl1_men.get(i).color, (int) (screen_w /
+				// 3.5),
+				// (int) (screen_h / 4.75));
 			}
 			try {
 				Thread.sleep(30);

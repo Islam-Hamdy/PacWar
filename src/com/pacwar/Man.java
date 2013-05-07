@@ -54,8 +54,8 @@ public class Man {
 		if (next != null && xb && yb && current_point_to_go < next.length) {
 			if (current_point_to_go < next.length - 1) {
 				current_point_to_go++;
-				destX = next[current_point_to_go].y * Global.CELL_WIDTH;
-				destY = next[current_point_to_go].x * Global.CELL_HEIGHT;
+				destX = (next[current_point_to_go].y - 1) * Global.CELL_WIDTH;
+				destY = (next[current_point_to_go].x - 1) * Global.CELL_HEIGHT;
 			}
 		}
 	}

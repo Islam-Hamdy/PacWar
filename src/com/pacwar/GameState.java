@@ -65,8 +65,6 @@ public class GameState implements Runnable {
 		pm.y = cell_h;
 		pm.destX = pm.x;
 		pm.destY = pm.y;
-		pm.xMap = 2;
-		pm.yMap = 2;
 		pm.cenX = (pm.x + 1.5f * cell_w);
 		pm.cenY = (pm.y + 1.5f * cell_h);
 		addMan(pm);
@@ -181,7 +179,7 @@ public class GameState implements Runnable {
 				return;
 			Man man = pl1_men.get(selectedMan);
 			Point p = getPoint(x, y);
-			man.next = findPath(man.xMap, man.yMap, p.x, p.y);
+			man.next = findPath((int)(man.y/cell_h), (int)(man.x/cell_w), p.x, p.y);
 			man.current_point_to_go = 1;
 			man.destX = man.next[0].y * Global.CELL_WIDTH;
 			man.destY = man.next[0].x * Global.CELL_HEIGHT;

@@ -3,7 +3,7 @@ package com.pacwar;
 import android.graphics.Point;
 
 public class Man {
-	int xMap, yMap, color, type, index;
+	int  color, type, index;
 
 	// Position.
 	public float x;
@@ -38,7 +38,7 @@ public class Man {
 			}
 			else if (x > destX){
 				x -= velocityX;
-				cenY-=velocityX;
+				cenX-=velocityX;
 			}
 		}
 		if (!yb) {

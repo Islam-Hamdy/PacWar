@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+	<LinearLayout
+		android:id="@+id/xmllayout_main"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:padding="2px"
+		android:background="#FFF"
+		android:layout_gravity="center">
+		<com.e3roid.opengl.RenderSurfaceView android:id="@+id/xmllayout_view"
+			android:layout_width="240px" 
+			android:layout_height="240px"/>
+	</LinearLayout>
+	<TextView android:id="@+id/bottom_textview"
+		android:layout_width="fill_parent" 
+		android:layout_height="wrap_content"
+		android:gravity="center"
+		android:textSize="20sp"
+		android:text="@string/app_name"/>
+</LinearLayout>

@@ -176,15 +176,18 @@ public class GameState implements Runnable {
 			int xMap = (int) (y / Global.CELL_HEIGHT);
 
 			clickState = select;
-			if (!map[xMap][yMap])
-				return;
+			// if (!map[xMap][yMap])
+			// return;
 			Man man = pl1_men.get(selectedMan);
+
 			Point p = getPoint(x, y);
-			man.next = findPath((int) (man.cenY / cell_h),
-					(int) (man.cenX / cell_w), p.x, p.y);
-			man.current_point_to_go = 1;
-			man.destX = (man.next[0].y - 1) * Global.CELL_WIDTH;
-			man.destY = (man.next[0].x - 1) * Global.CELL_HEIGHT;
+			if (p != null) {
+				man.next = findPath((int) (man.cenY / cell_h),
+						(int) (man.cenX / cell_w), p.x, p.y);
+				man.current_point_to_go = 1;
+				man.destX = (man.next[0].y - 1) * Global.CELL_WIDTH;
+				man.destY = (man.next[0].x - 1) * Global.CELL_HEIGHT;
+			}
 		}
 	}
 
@@ -194,14 +197,16 @@ public class GameState implements Runnable {
 		if (map[xMap][yMap])
 			return new Point(xMap, yMap);
 		int nx, ny;
-		for (int i = 0; i < 8; i++) {
-			nx = xMap + dx[i];
-			ny = yMap + dy[i];
-			if (nx < 0 || nx >= Global.MAP_HEIGHT || ny < 0
-					|| ny >= Global.MAP_WIDTH)
-				continue;
-			if (map[nx][ny])
-				return new Point(nx, ny);
+		for (int margin = 1; margin <= 2; margin++) {
+			for (int i = 0; i < 8; i++) {
+				nx = xMap + margin * dx[i];
+				ny = yMap + margin * dy[i];
+				if (nx < 0 || nx >= Global.MAP_HEIGHT || ny < 0
+						|| ny >= Global.MAP_WIDTH)
+					continue;
+				if (map[nx][ny])
+					return new Point(nx, ny);
+			}
 		}
 		return null; // if we are here then a7a :|
 	}

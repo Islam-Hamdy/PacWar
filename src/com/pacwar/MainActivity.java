@@ -105,16 +105,12 @@ public class MainActivity extends E3Activity {
 		return scene;
 	}
 
-	private int pacman_real_w, pacman_real_h;
-	private int pacman_shift_w, pacman_shift_h;
-	private float ghost_scale_w, ghost_scale_h;
+	private int pacman_shift_x, pacman_shift_y;
+	private int ghost_shift_x, ghost_shift_y;
 
 	public void show_pacman(int color, int x, int y, int w, int h) {
-		pacman_real_w = w;
-		pacman_real_h = h;
-
-		pacman_shift_w = (int) Math.round(pacman_real_w / 2.0 - pac_w / 2.0);
-		pacman_shift_h = (int) Math.round(pacman_real_h / 2.0 - pac_h / 2.0);
+		pacman_shift_x = (int) Math.round(w / 2.0 - pac_w / 2.0);
+		pacman_shift_y = (int) Math.round(h / 2.0 - pac_h / 2.0);
 
 		pacManSprite[color].scale((float) (w * 1.0 / pac_w),
 				(float) (h * 1.0 / pac_h));
@@ -127,10 +123,13 @@ public class MainActivity extends E3Activity {
 	}
 
 	public void move_pacman(int color, int x, int y) {
-		pacManSprite[color].move(pacman_shift_w + x, pacman_shift_h + y);
+		pacManSprite[color].move(pacman_shift_x + x, pacman_shift_y + y);
 	}
 
 	public void show_ghost(int color, int x, int h, int w, int y) {
+		ghost_shift_x = (int) Math.round(w / 2.0 - ghost_w / 2.0);
+		ghost_shift_y = (int) Math.round(h / 2.0 - ghost_h / 2.0);
+
 		ghostSprite[color].scale((float) (w * 1.0 / ghost_w),
 				(float) (h * 1.0 / ghost_h));
 		ghostSprite[color].move(x, y);
@@ -142,7 +141,7 @@ public class MainActivity extends E3Activity {
 	}
 
 	public void move_ghost(int color, int x, int y) {
-		ghostSprite[color].move(x, y);
+		ghostSprite[color].move(ghost_shift_x + x, ghost_shift_y + y);
 	}
 
 	int pac_w = 36, pac_h = 37;
@@ -170,7 +169,6 @@ public class MainActivity extends E3Activity {
 				// position of the actual device.
 				int x = getTouchEventX(scene, motionEvent);
 				int y = getTouchEventY(scene, motionEvent);
-				System.out.println("++++++:" + x + "  " + y);
 				model.SceneTouch(x, y);
 				// pacManSprite.move(x, y);
 

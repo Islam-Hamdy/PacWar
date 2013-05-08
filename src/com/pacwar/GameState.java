@@ -145,37 +145,37 @@ public class GameState implements Runnable {
 	int selectedMan;
 
 	public void SceneTouch(float x, float y) {
-		int yMap = (int) (x / Global.CELL_WIDTH);
-		int xMap = (int) (y / Global.CELL_HEIGHT);
-
-		int manClicked = pac;
-		float min = 1 << 27, tmp;
-		Man cur;
-		for (int i = 0; i < pl1_men.size(); i++) {
-			cur = pl1_men.get(i);
-			tmp = (cur.cenX - x) * (cur.cenX - x) + (cur.cenY - y)
-					* (cur.cenY - y);
-			if (tmp < min
-					&& tmp < Global.TOUCH_ERROR_THRESHOLD
-							* Global.TOUCH_ERROR_THRESHOLD) {
-				min = tmp;
-				manClicked = cur.index;
-			}
-		}
-
-		System.out.println("pos " + x + " " + y);
-		System.out.println(xMap + "   ?   " + yMap);
-		System.out.println(1 + " " + clickState);
-		if (manClicked > 0 && manClicked != pac
-				&& manClicked - 1 == selectedMan && clickState == action) {
-			return;
-		}
 		if (clickState == select) {
+			int manClicked = pac;
+			float min = 1 << 27, tmp;
+			Man cur;
+
+			for (int i = 0; i < pl1_men.size(); i++) {
+				cur = pl1_men.get(i);
+				tmp = (cur.cenX - x) * (cur.cenX - x) + (cur.cenY - y)
+						* (cur.cenY - y);
+				if (tmp < min
+						&& tmp < Global.TOUCH_ERROR_THRESHOLD
+								* Global.TOUCH_ERROR_THRESHOLD) {
+					min = tmp;
+					manClicked = cur.index;
+				}
+			}
+
+			if (manClicked > 0 && manClicked != pac
+					&& manClicked - 1 == selectedMan && clickState == action) {
+				return;
+			}
+
 			if (manClicked > 0 && manClicked != pac) {
 				selectedMan = manClicked - 1;
 				clickState = action;
 			}
 		} else if (clickState == action) {
+			int yMap = (int) (x / Global.CELL_WIDTH);
+			int xMap = (int) (y / Global.CELL_HEIGHT);
+
+			clickState = select;
 			if (!map[xMap][yMap])
 				return;
 			Man man = pl1_men.get(selectedMan);
@@ -185,15 +185,12 @@ public class GameState implements Runnable {
 			man.current_point_to_go = 1;
 			man.destX = (man.next[0].y - 1) * Global.CELL_WIDTH;
 			man.destY = (man.next[0].x - 1) * Global.CELL_HEIGHT;
-			clickState = select;
 		}
-		System.out.println(2 + " " + clickState);
 	}
 
 	public Point getPoint(float x, float y) {
 		int yMap = (int) (x / Global.CELL_WIDTH);
 		int xMap = (int) (y / Global.CELL_HEIGHT);
-		System.out.println("=============" + xMap + "   " + yMap);
 		if (map[xMap][yMap])
 			return new Point(xMap, yMap);
 		int nx, ny;

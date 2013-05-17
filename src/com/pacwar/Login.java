@@ -1,5 +1,7 @@
 package com.pacwar;
 
+import com.pacwar.Lobby.DownloadFilesTask;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +13,7 @@ import android.view.View;
 import android.widget.EditText;
 
 public class Login extends Activity {
+	static String name;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -27,21 +30,26 @@ public class Login extends Activity {
 
 	public void Host(View view) {
 		EditText t = (EditText) findViewById(R.id.user);
-		String name = t.getText().toString();
+		name = t.getText().toString();
 		GameState.curPlayer = 0;
-		if (name.isEmpty())
+		if (name.length()==0)
 			return;
 		try {
-			ServerMethods.register(name);
-			ServerMethods.host(name);
+			DownloadFilesTask d = new Lobby().new DownloadFilesTask();
+			Lobby.joined = false;
+			d.execute(Lobby.host);
+			while (!Lobby.joined)
+				;
+			Intent myIntent = new Intent(this, MainActivity.class);
+			startActivity(myIntent);
 		} catch (Exception e) {
 		}
 	}
 
 	public void Join(View view) {
 		EditText t = (EditText) findViewById(R.id.user);
-		String name = t.getText().toString();
-		if (name.isEmpty())
+		name = t.getText().toString();
+		if (name.length()==0)
 			return;
 		GameState.curPlayer = 1;
 		Intent myIntent = new Intent(this, Lobby.class);

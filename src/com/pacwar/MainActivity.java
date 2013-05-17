@@ -15,7 +15,7 @@ import com.e3roid.drawable.texture.TiledTexture;
 
 public class MainActivity extends E3Activity {
 	public E3Scene scene;
-	public GameState model;
+	public static GameState model;
 	private TiledTexture pacman_texture;
 	private AnimatedSprite pacManSprite[];
 	private TiledTexture ghosts_texture;

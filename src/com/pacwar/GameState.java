@@ -151,7 +151,7 @@ public class GameState implements Runnable {
 		if (player == curPlayer) {
 			try {
 				// TODO set the name variable
-				ServerMethods.sendMessage(name, EncodeMsg(x, y));
+//				ServerMethods.sendMessage(name, EncodeMsg(x, y));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -269,7 +269,7 @@ public class GameState implements Runnable {
 				// 3.5),
 				// (int) (screen_h / 4.75));
 			}
-			/*
+			
 			 // XXX NOT WORKING MESH 3AREF LEH !!!
 			if(frameTime<minFrameTime){
 				try {
@@ -279,7 +279,7 @@ public class GameState implements Runnable {
 					e.printStackTrace();
 				}
 			}
-			*/
+			
 			
 //			try {
 //				Thread.sleep(30);

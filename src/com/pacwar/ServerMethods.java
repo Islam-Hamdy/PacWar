@@ -177,7 +177,7 @@ public class ServerMethods {
 		return tempstr.contains("succsessfully");
 	}
 
-	static ArrayList<String> getHostsList() throws Exception {
+	public ArrayList<String> getHostsList() throws Exception {
 		URL url = new URL("http://myserver.herokuapp.com/?show=hosts");
 		HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
 		httpConn.setDoOutput(true);

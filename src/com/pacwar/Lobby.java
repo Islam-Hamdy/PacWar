@@ -33,8 +33,9 @@ public class Lobby extends Activity {
 
 		try {
 			DownloadFilesTask d = new DownloadFilesTask();
+			done = false;
 			d.execute(0);
-
+			while(!done);
 			// list =new ArrayList<String>();
 			// list.add("7amada");
 			// list.add("7amo");
@@ -144,10 +145,11 @@ public class Lobby extends Activity {
 	}
 
 	byte[] sharedBuffer = new byte[1000];
-
+	boolean done ;
 	private class DownloadFilesTask extends AsyncTask<Integer, Integer, Long> {
 		protected Long doInBackground(Integer... urls) {
 			try {
+				done = false;
 				URL url = new URL("http://myserver.herokuapp.com/?show=hosts");
 				HttpURLConnection httpConn = (HttpURLConnection) url
 						.openConnection();
@@ -167,6 +169,7 @@ public class Lobby extends Activity {
 					res.add(myScanner.next());
 				myScanner.close();
 				list = res;
+				done = true;
 			} catch (Exception ee) {
 				ee.printStackTrace();
 			}

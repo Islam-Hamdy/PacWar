@@ -28,23 +28,15 @@ public class GameState implements Runnable {
 	int clickState = 0;
 	static boolean[][] map = new boolean[map_h][map_w];
 	static boolean[][] vis = new boolean[map_h][map_w];
-	int pl_1_state, pl_2_state;
 	static float cell_w, cell_h;
 	static int curPlayer;
 	String name;
-	ArrayList<Man> pl1_men = new ArrayList<Man>();
-	ArrayList<Man> pl2_men = new ArrayList<Man>();
+	Player p1, p2;
 
 	public GameState(MainActivity mainActivity) throws IOException {
 		view = mainActivity;
 		init(Global.SCREEN_WIDTH, Global.SCREEN_HEIGHT);
 		new Thread(this).start();
-	}
-
-	public void addMan(Man man) {
-		pl1_men.add(man);
-		int idx = pl1_men.size();
-		man.index = idx;
 	}
 
 	public void init(float screen_w, float screen_h) throws IOException {
@@ -56,23 +48,74 @@ public class GameState implements Runnable {
 		Global.CELL_HEIGHT = cell_h;
 		Global.TOUCH_ERROR_THRESHOLD = Math.max(Global.CELL_HEIGHT,
 				Global.CELL_WIDTH) * 5;
-		pl1_men.clear();
-		pl2_men.clear();
 
 		mapinit();
-		pl_1_state = select;
-		pl_2_state = select;
 
-		Man pm = new Man();
-		pm.x = cell_w;
-		pm.y = cell_h;
-		pm.destX = pm.x;
-		pm.destY = pm.y;
-		pm.cenX = (pm.x + 1.5f * cell_w);
-		pm.cenY = (pm.y + 1.5f * cell_h);
-		addMan(pm);
-		view.show_pacman(0, (int) pm.x, (int) pm.y, (int) cell_w * 3,
+		p1 = new Player();
+		p2 = new Player();
+
+		p1.state = select;
+		p2.state = select;
+
+		initializePlayersMen();
+	}
+
+	private void initializePlayersMen() {
+
+		// Pac 1
+		Man pm1 = new Man();
+		pm1.x = cell_w;
+		pm1.y = cell_h;
+		pm1.destX = pm1.x;
+		pm1.destY = pm1.y;
+		pm1.cenX = (pm1.x + 1.5f * cell_w);
+		pm1.cenY = (pm1.y + 1.5f * cell_h);
+		pm1.type = Global.PACMAN_TYPE;
+		p1.addMan(pm1);
+		view.show_pacman(0, (int) pm1.x, (int) pm1.y, (int) cell_w * 3,
 				(int) cell_h * 3);
+
+		// ghost 1
+
+		Man pm11 = new Man();
+		pm11.x = pm1.x + (3 * cell_w);
+		pm11.y = cell_h;
+		pm11.destX = pm11.x;
+		pm11.destY = pm11.y;
+		pm11.cenX = (pm11.x + 1.5f * cell_w);
+		pm11.cenY = (pm11.y + 1.5f * cell_h);
+		pm11.type = Global.GHOST_TYPE;
+		p1.addMan(pm11);
+		view.show_pacman(0, (int) pm11.x, (int) pm11.y, (int) cell_w * 3,
+				(int) cell_h * 3);
+
+		// Pac 2
+		Man pm2 = new Man();
+		pm2.x = Global.CELL_WIDTH - cell_w - (3 * cell_w);
+		pm2.y = Global.CELL_HEIGHT - cell_h - (3 * cell_h);
+		pm2.destX = pm2.x;
+		pm2.destY = pm2.y;
+		pm2.cenX = (pm2.x + 1.5f * cell_w);
+		pm2.cenY = (pm2.y + 1.5f * cell_h);
+		pm2.type = Global.PACMAN_TYPE;
+		p2.addMan(pm2);
+		view.show_pacman(0, (int) pm2.x, (int) pm2.y, (int) cell_w * 3,
+				(int) cell_h * 3);
+
+		// ghost 2
+
+		Man pm22 = new Man();
+		pm22.x = pm2.x - (3 * cell_w);
+		pm22.y = cell_h;
+		pm22.destX = pm22.x;
+		pm22.destY = pm22.y;
+		pm22.cenX = (pm22.x + 1.5f * cell_w);
+		pm22.cenY = (pm22.y + 1.5f * cell_h);
+		pm22.type = Global.GHOST_TYPE;
+		p2.addMan(pm22);
+		view.show_pacman(0, (int) pm22.x, (int) pm22.y, (int) cell_w * 3,
+				(int) cell_h * 3);
+
 	}
 
 	public void mapinit() throws IOException {
@@ -151,7 +194,7 @@ public class GameState implements Runnable {
 		if (player == curPlayer) {
 			try {
 				// TODO set the name variable
-//				ServerMethods.sendMessage(name, EncodeMsg(x, y));
+				ServerMethods.sendMessage(name, EncodeMsg(x, y));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -160,8 +203,8 @@ public class GameState implements Runnable {
 				float min = 1 << 27, tmp;
 				Man cur;
 
-				for (int i = 0; i < pl1_men.size(); i++) {
-					cur = pl1_men.get(i);
+				for (int i = 0; i < p1.men.size(); i++) {
+					cur = p1.men.get(i);
 					tmp = (cur.cenX - x) * (cur.cenX - x) + (cur.cenY - y)
 							* (cur.cenY - y);
 					if (tmp < min
@@ -184,7 +227,7 @@ public class GameState implements Runnable {
 				}
 			} else if (clickState == action) {
 				clickState = select;
-				Man man = pl1_men.get(selectedMan);
+				Man man = p1.men.get(selectedMan);
 
 				Point p = getPoint(x, y);
 				if (p != null) {
@@ -253,39 +296,53 @@ public class GameState implements Runnable {
 	@Override
 	public void run() {
 		long currentTime = System.nanoTime();
-		long minFrameTime = 1000000000/framesPerSec;
+		long minFrameTime = 1000000000 / framesPerSec;
 		while (true) {
 			long newTime = System.nanoTime();
 			long frameTime = newTime - currentTime;
 			currentTime = newTime;
-			
-			for (int i = 0; i < pl1_men.size(); i++) {
-				pl1_men.get(i).updateMe();
-				view.move_pacman(pl1_men.get(i).color,
-						(int) (pl1_men.get(i).x), (int) (pl1_men.get(i).y));
-				
+
+			for (int i = 0; i < p1.men.size(); i++) {
+				p1.men.get(i).updateMe();
+				if (p1.men.get(i).type == Global.PACMAN_TYPE)
+					view.move_pacman(p1.men.get(i).color,
+							(int) (p1.men.get(i).x), (int) (p1.men.get(i).y));
+				else
+					view.move_ghost(p1.men.get(i).color,
+							(int) (p1.men.get(i).x), (int) (p1.men.get(i).y));
+
 				// just test
 				// view.move_pacman(pl1_men.get(i).color, (int) (screen_w /
 				// 3.5),
 				// (int) (screen_h / 4.75));
 			}
-			
-			 // XXX NOT WORKING MESH 3AREF LEH !!!
-			if(frameTime<minFrameTime){
-				try {
-					Thread.sleep((minFrameTime-frameTime)/1000000);
-//					System.out.println((minFrameTime-frameTime)/1000000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+
+			for (int i = 0; i < p2.men.size(); i++) {
+				p2.men.get(i).updateMe();
+				if (p2.men.get(i).type == Global.PACMAN_TYPE)
+					view.move_pacman(p2.men.get(i).color,
+							(int) (p2.men.get(i).x), (int) (p2.men.get(i).y));
+				else
+					view.move_ghost(p2.men.get(i).color,
+							(int) (p2.men.get(i).x), (int) (p2.men.get(i).y));
+
+				// just test
+				// view.move_pacman(pl1_men.get(i).color, (int) (screen_w /
+				// 3.5),
+				// (int) (screen_h / 4.75));
 			}
-			
-			
-//			try {
-//				Thread.sleep(30);
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			}
+			/*
+			 * // XXX NOT WORKING MESH 3AREF LEH !!! if(frameTime<minFrameTime){
+			 * try { Thread.sleep((minFrameTime-frameTime)/1000000); //
+			 * System.out.println((minFrameTime-frameTime)/1000000); } catch
+			 * (InterruptedException e) { e.printStackTrace(); } }
+			 */
+
+			// try {
+			// Thread.sleep(30);
+			// } catch (InterruptedException e) {
+			// e.printStackTrace();
+			// }
 		}
 	}
 }

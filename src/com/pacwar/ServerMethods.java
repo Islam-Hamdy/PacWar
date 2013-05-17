@@ -20,6 +20,7 @@ public class ServerMethods {
 	}
 
 	static String password = "androidelteety ";
+	private static byte[] sharedBuffer = new byte[1000];
 
 	static boolean register(String userName) throws Exception {
 		HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
@@ -30,11 +31,10 @@ public class ServerMethods {
 		os.write((password + "register " + userName).getBytes());
 		os.close();
 		InputStream in = httpConn.getInputStream();
-		byte[] buffer = new byte[1000];
 		int read;
 		String tempstr = "";
-		while ((read = in.read(buffer)) != -1)
-			tempstr += new String(buffer, 0, read);
+		while ((read = in.read(sharedBuffer)) != -1)
+			tempstr += new String(sharedBuffer, 0, read);
 		in.close();
 		return tempstr.contains("succsessfully");
 	}
@@ -48,11 +48,10 @@ public class ServerMethods {
 		os.write((password + "unregister " + userName).getBytes());
 		os.close();
 		InputStream in = httpConn.getInputStream();
-		byte[] buffer = new byte[1000];
 		int read;
 		String tempstr = "";
-		while ((read = in.read(buffer)) != -1)
-			tempstr += new String(buffer, 0, read);
+		while ((read = in.read(sharedBuffer)) != -1)
+			tempstr += new String(sharedBuffer, 0, read);
 		in.close();
 		return tempstr.contains("succsessfully");
 	}
@@ -60,17 +59,10 @@ public class ServerMethods {
 	// run in a different thread
 	/*
 	 * Thread t = new Thread(new Runnable() {
-					@Override
-					public void run() {
-						System.out.println("start");
-						try {
-							ServerMethods.host(username);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				});
-				t.start();
+	 * 
+	 * @Override public void run() { System.out.println("start"); try {
+	 * ServerMethods.host(username); } catch (Exception e) {
+	 * e.printStackTrace(); } } }); t.start();
 	 */
 	static void host(String userName) throws Exception {
 		connected = true;
@@ -118,21 +110,16 @@ public class ServerMethods {
 		in.close();
 		return tempstr.contains("succsessfully");
 	}
-	
-	//connect to a host
-	//run in different thread
-	/*Thread t = new Thread(new Runnable() {
-		@Override
-		public void run() {
-			System.out.println("start");
-			try {
-				ServerMethods.host(username);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	});
-	t.start();*/
+
+	// connect to a host
+	// run in different thread
+	/*
+	 * Thread t = new Thread(new Runnable() {
+	 * 
+	 * @Override public void run() { System.out.println("start"); try {
+	 * ServerMethods.host(username); } catch (Exception e) {
+	 * e.printStackTrace(); } } }); t.start();
+	 */
 	static boolean connect(String userName, String hostName) throws Exception {
 		connected = true;
 		HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
@@ -147,7 +134,7 @@ public class ServerMethods {
 		int read;
 		String tempstr = "";
 		while (connected) {
-			while ((read = in.read(buffer)) != -1){
+			while ((read = in.read(buffer)) != -1) {
 				tempstr = new String(buffer, 0, read);
 				// TODO message received from remote
 				// TODO do something
@@ -181,11 +168,10 @@ public class ServerMethods {
 		os.write((password + "disconnect " + userName).getBytes());
 		os.close();
 		InputStream in = httpConn.getInputStream();
-		byte[] buffer = new byte[1000];
 		int read;
 		String tempstr = "";
-		while ((read = in.read(buffer)) != -1)
-			tempstr += new String(buffer, 0, read);
+		while ((read = in.read(sharedBuffer)) != -1)
+			tempstr += new String(sharedBuffer, 0, read);
 		in.close();
 		return tempstr.contains("succsessfully");
 	}
@@ -197,11 +183,10 @@ public class ServerMethods {
 		httpConn.setRequestMethod("GET");
 		httpConn.connect();
 		InputStream in = httpConn.getInputStream();
-		byte[] buffer = new byte[1000];
 		int read;
 		String tempstr = "";
-		while ((read = in.read(buffer)) != -1)
-			tempstr += new String(buffer, 0, read);
+		while ((read = in.read(sharedBuffer)) != -1)
+			tempstr += new String(sharedBuffer, 0, read);
 		in.close();
 		Scanner myScanner = new Scanner(tempstr);
 		myScanner.nextLine();

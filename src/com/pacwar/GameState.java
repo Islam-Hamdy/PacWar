@@ -172,21 +172,18 @@ public class GameState implements Runnable {
 				clickState = action;
 			}
 		} else if (clickState == action) {
-			int yMap = (int) (x / Global.CELL_WIDTH);
-			int xMap = (int) (y / Global.CELL_HEIGHT);
-
 			clickState = select;
-			// if (!map[xMap][yMap])
-			// return;
 			Man man = pl1_men.get(selectedMan);
 
 			Point p = getPoint(x, y);
 			if (p != null) {
 				man.next = findPath((int) (man.cenY / cell_h),
 						(int) (man.cenX / cell_w), p.x, p.y);
-				man.current_point_to_go = 1;
-				man.destX = (man.next[0].y - 1) * Global.CELL_WIDTH;
-				man.destY = (man.next[0].x - 1) * Global.CELL_HEIGHT;
+				if (man.next.length > 0) {
+					man.current_point_to_go = 1;
+					man.destX = (man.next[0].y - 1) * Global.CELL_WIDTH;
+					man.destY = (man.next[0].x - 1) * Global.CELL_HEIGHT;
+				}
 			}
 		}
 	}

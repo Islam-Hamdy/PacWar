@@ -5,7 +5,6 @@
     android:orientation="vertical"
     tools:context=".Login" >
 
-    
     <EditText
         android:id="@+id/user"
         android:layout_width="fill_parent"
@@ -16,7 +15,7 @@
 
         <requestFocus />
     </EditText>
-    
+
     <Button
         android:id="@+id/button2"
         android:layout_width="fill_parent"
@@ -32,6 +31,5 @@
         android:layout_weight="1"
         android:onClick="Host"
         android:text="@string/Host" />
-
 
 </LinearLayout>

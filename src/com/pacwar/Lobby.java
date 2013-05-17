@@ -4,6 +4,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -78,10 +80,12 @@ public class Lobby extends Activity {
 			}
 		});
 	}
-	public void startIt(){
+
+	public void startIt() {
 		Intent myIntent = new Intent(this, MainActivity.class);
 		startActivity(myIntent);
 	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -117,7 +121,7 @@ public class Lobby extends Activity {
 	byte[] sharedBuffer = new byte[1000];
 	boolean done;
 	String hostName;
-	String message;
+	static String message;
 	static final int getHostList = 0;
 	static final int connect = 1;
 	static final int disconnect = 2;
@@ -129,7 +133,7 @@ public class Lobby extends Activity {
 		protected Long doInBackground(Integer... f) {
 			try {
 				url = new URL("http://myserver.herokuapp.com");
-				userName=Login.name;
+				userName = Login.name;
 				if (f[0] == getHostList)
 					getList();
 				else {
@@ -226,18 +230,19 @@ public class Lobby extends Activity {
 			InputStream in = httpConn.getInputStream();
 			byte[] buffer = new byte[1000];
 			int read;
-			String tempstr = "";
+			String tmpstr = "";
 			while (connected) {
 				while ((read = in.read(buffer)) != -1) {
-					tempstr = new String(buffer, 0, read);
-					// TODO message received from remote
-					// TODO do something
+					tmpstr = new String(buffer, 0, read);
+					decode(tmpstr);
+					MainActivity.model
+							.SceneTouch(x, y, 1 - GameState.curPlayer);
 				}
 				in.close();
 				in = reconnect();
 			}
 			in.close();
-			return tempstr.contains("succsessfully");
+			return tmpstr.contains("succsessfully");
 		}
 
 		public boolean sendMessage() throws Exception {
@@ -318,7 +323,9 @@ public class Lobby extends Activity {
 					if (tmpstr.contains("connected")) {
 						joined = true;
 					} else {
-						// MainActivity.model.SceneTouch(x, y, player);
+						decode(tmpstr);
+						MainActivity.model.SceneTouch(x, y,
+								1 - GameState.curPlayer);
 					}
 					// TODO message received from remote
 					// TODO do something
@@ -329,12 +336,23 @@ public class Lobby extends Activity {
 			in.close();
 		}
 
+		private float x, y;
+
+		private void decode(String msg) {
+			byte[] xx = new byte[4];
+			for (int i = 0; i < 4; i++)
+				xx[i] = (byte) msg.charAt(i);
+			x = ByteBuffer.wrap(xx).order(ByteOrder.LITTLE_ENDIAN).getFloat();
+			for (int i = 0; i < 4; i++)
+				xx[i] = (byte) msg.charAt(i + 4);
+			y = ByteBuffer.wrap(xx).order(ByteOrder.LITTLE_ENDIAN).getFloat();
+		}
+
 		boolean connected = false;
 
 		protected void onProgressUpdate(Integer... progress) {
 		}
 
-		
 		protected void onPostExecute(Long result) {
 		}
 	}

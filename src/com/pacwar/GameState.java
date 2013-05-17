@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import com.pacwar.Lobby.DownloadFilesTask;
+
 import android.content.res.AssetManager;
 import android.graphics.Point;
 
@@ -32,10 +34,12 @@ public class GameState implements Runnable {
 	static int curPlayer;
 	String name;
 	Player p1, p2;
+	DownloadFilesTask d;
 
 	public GameState(MainActivity mainActivity) throws IOException {
 		view = mainActivity;
 		init(Global.SCREEN_WIDTH, Global.SCREEN_HEIGHT);
+		d = new Lobby().new DownloadFilesTask();
 		new Thread(this).start();
 	}
 
@@ -194,7 +198,9 @@ public class GameState implements Runnable {
 		if (player == curPlayer) {
 			try {
 				// TODO set the name variable
-				ServerMethods.sendMessage(name, EncodeMsg(x, y));
+				Lobby.message=EncodeMsg(x, y);
+				d.execute(Lobby.sendMessage);
+//				sendMessage(name, EncodeMsg(x, y));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -245,18 +251,7 @@ public class GameState implements Runnable {
 		}
 	}
 
-	private void decode(String msg) {
-		byte[] xx = new byte[4];
-		for (int i = 0; i < 4; i++)
-			xx[i] = (byte) msg.charAt(i);
-		float x1 = ByteBuffer.wrap(xx).order(ByteOrder.LITTLE_ENDIAN)
-				.getFloat();
-		for (int i = 0; i < 4; i++)
-			xx[i] = (byte) msg.charAt(i + 4);
-		float y1 = ByteBuffer.wrap(xx).order(ByteOrder.LITTLE_ENDIAN)
-				.getFloat();
-
-	}
+	
 
 	private String EncodeMsg(float x, float y) {
 		byte[] m = new byte[8];

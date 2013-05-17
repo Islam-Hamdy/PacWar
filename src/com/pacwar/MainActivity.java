@@ -37,19 +37,20 @@ public class MainActivity extends E3Activity {
 		int centerY = (getHeight() - pacman_texture.getTileHeight()) / 2;
 
 		// Add animation frames from tile.
-		ArrayList<AnimatedSprite.Frame>[] pacman_frames = new ArrayList[pacmans_no];
+		ArrayList<AnimatedSprite.Frame>pacman_frames = new ArrayList<AnimatedSprite.Frame>();
 
+		pacman_frames = new ArrayList<AnimatedSprite.Frame>();
+		pacman_frames.add(new AnimatedSprite.Frame(2, 0));
+		pacman_frames.add(new AnimatedSprite.Frame(1, 0));
+		pacman_frames.add(new AnimatedSprite.Frame(0, 0));
+		
 		pacManSprite = new AnimatedSprite[pacmans_no];
 		for (int i = 0; i < pacmans_no; i++) {
-			pacman_frames[i] = new ArrayList<AnimatedSprite.Frame>();
-			pacman_frames[i].add(new AnimatedSprite.Frame(2, i));
-			pacman_frames[i].add(new AnimatedSprite.Frame(1, i));
-			pacman_frames[i].add(new AnimatedSprite.Frame(0, i));
 
 			pacManSprite[i] = new AnimatedSprite(pacman_texture, 0, 0);
 			// pacManSprite[i].scale(1, 1);
 			// Start animation with 500msec, infinite loop.
-			pacManSprite[i].animate(500, pacman_frames[i]);
+			pacManSprite[i].animate(500, pacman_frames);
 			scene.getTopLayer().add(pacManSprite[i]);
 			pacManSprite[i].setVisible(false);
 		}

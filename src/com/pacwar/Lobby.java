@@ -322,7 +322,7 @@ public class Lobby extends Activity {
 					tmpstr = new String(buffer, 0, read);
 					if (tmpstr.contains("connected")) {
 						joined = true;
-					} else {
+					} else if(joined){
 						decode(tmpstr);
 						MainActivity.model.SceneTouch(x, y,
 								1 - GameState.curPlayer);

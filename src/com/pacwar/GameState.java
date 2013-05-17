@@ -93,7 +93,7 @@ public class GameState implements Runnable {
 		pm11.cenY = (pm11.y + 1.5f * cell_h);
 		pm11.type = Global.GHOST_TYPE;
 		players[0].addMan(pm11);
-		view.show_pacman(0, (int) pm11.x, (int) pm11.y, (int) cell_w * 3,
+		view.show_ghost(0, (int) pm11.x, (int) pm11.y, (int) cell_w * 3,
 				(int) cell_h * 3);
 
 		// Pac 2
@@ -106,7 +106,7 @@ public class GameState implements Runnable {
 		pm2.cenY = (pm2.y + 1.5f * cell_h);
 		pm2.type = Global.PACMAN_TYPE;
 		players[1].addMan(pm2);
-		view.show_pacman(0, (int) pm2.x, (int) pm2.y, (int) cell_w * 3,
+		view.show_pacman(1, (int) pm2.x, (int) pm2.y, (int) cell_w * 3,
 				(int) cell_h * 3);
 
 		// ghost 2
@@ -120,7 +120,7 @@ public class GameState implements Runnable {
 		pm22.cenY = (pm22.y + 1.5f * cell_h);
 		pm22.type = Global.GHOST_TYPE;
 		players[1].addMan(pm22);
-		view.show_pacman(0, (int) pm22.x, (int) pm22.y, (int) cell_w * 3,
+		view.show_ghost(1, (int) pm22.x, (int) pm22.y, (int) cell_w * 3,
 				(int) cell_h * 3);
 
 	}

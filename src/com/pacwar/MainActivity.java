@@ -169,7 +169,7 @@ public class MainActivity extends E3Activity {
 				// position of the actual device.
 				int x = getTouchEventX(scene, motionEvent);
 				int y = getTouchEventY(scene, motionEvent);
-				model.SceneTouch(x, y);
+				model.SceneTouch(x, y,GameState.curPlayer);
 				// pacManSprite.move(x, y);
 
 				// In order to stop the animation, just call stop() method like

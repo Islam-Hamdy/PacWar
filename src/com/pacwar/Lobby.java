@@ -1,11 +1,17 @@
 package com.pacwar;
 
+import java.io.BufferedInputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Scanner;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -16,6 +22,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 public class Lobby extends Activity {
+	ArrayList<String> list = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -24,20 +31,20 @@ public class Lobby extends Activity {
 
 		final ListView listview = (ListView) findViewById(R.id.listview);
 
-		ArrayList<String> list = null;
 		try {
-//			list = ServerMethods.getHostsList();
-			list =new ArrayList<String>();
-			list.add("7amada");
-			list.add("7amo");
-			list.add("gad el 5arouf");
+			DownloadFilesTask d = new DownloadFilesTask();
+			d.execute(0);
+
+			// list =new ArrayList<String>();
+			// list.add("7amada");
+			// list.add("7amo");
+			// list.add("gad el 5arouf");
 		} catch (Exception e) {
-			System.out.println("gad el 5arouf");
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		System.out.println("------------"+list);
+
+		System.out.println("------------" + list);
 
 		final StableArrayAdapter adapter = new StableArrayAdapter(this,
 				android.R.layout.simple_list_item_1, list);
@@ -134,5 +141,42 @@ public class Lobby extends Activity {
 			return true;
 		}
 
+	}
+
+	byte[] sharedBuffer = new byte[1000];
+
+	private class DownloadFilesTask extends AsyncTask<Integer, Integer, Long> {
+		protected Long doInBackground(Integer... urls) {
+			try {
+				URL url = new URL("http://myserver.herokuapp.com/?show=hosts");
+				HttpURLConnection httpConn = (HttpURLConnection) url
+						.openConnection();
+//				httpConn.setDoOutput(true);
+				httpConn.setRequestMethod("GET");
+				httpConn.connect();
+				InputStream in = httpConn.getInputStream();
+				int read;
+				String tempstr = "";
+				while ((read = in.read(sharedBuffer)) != -1)
+					tempstr += new String(sharedBuffer, 0, read);
+				in.close();
+				Scanner myScanner = new Scanner(tempstr);
+				myScanner.nextLine();
+				ArrayList<String> res = new ArrayList<String>();
+				while (myScanner.hasNext())
+					res.add(myScanner.next());
+				myScanner.close();
+				list = res;
+			} catch (Exception ee) {
+				ee.printStackTrace();
+			}
+			return 0L;
+		}
+
+		protected void onProgressUpdate(Integer... progress) {
+		}
+
+		protected void onPostExecute(Long result) {
+		}
 	}
 }

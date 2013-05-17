@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -16,7 +18,7 @@ public class GameState implements Runnable {
 	static int ghosts = 2, pacmans = 2;
 	static int map_w = Global.MAP_WIDTH, map_h = Global.MAP_HEIGHT;
 	float screen_w, screen_h;
-
+	static int framesPerSec = 40;
 	// men 1,2,3,4,5,6...
 	// player1 +ve, player2 -ve
 	static final int block = 0;
@@ -28,7 +30,8 @@ public class GameState implements Runnable {
 	static boolean[][] vis = new boolean[map_h][map_w];
 	int pl_1_state, pl_2_state;
 	static float cell_w, cell_h;
-
+	static int curPlayer;
+	String name;
 	ArrayList<Man> pl1_men = new ArrayList<Man>();
 	ArrayList<Man> pl2_men = new ArrayList<Man>();
 
@@ -144,48 +147,83 @@ public class GameState implements Runnable {
 
 	int selectedMan;
 
-	public void SceneTouch(float x, float y) {
-		if (clickState == select) {
-			int manClicked = pac;
-			float min = 1 << 27, tmp;
-			Man cur;
+	public void SceneTouch(float x, float y, int player) {
+		if (player == curPlayer) {
+			try {
+				// TODO set the name variable
+				ServerMethods.sendMessage(name, EncodeMsg(x, y));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			if (clickState == select) {
+				int manClicked = pac;
+				float min = 1 << 27, tmp;
+				Man cur;
 
-			for (int i = 0; i < pl1_men.size(); i++) {
-				cur = pl1_men.get(i);
-				tmp = (cur.cenX - x) * (cur.cenX - x) + (cur.cenY - y)
-						* (cur.cenY - y);
-				if (tmp < min
-						&& tmp < Global.TOUCH_ERROR_THRESHOLD
-								* Global.TOUCH_ERROR_THRESHOLD) {
-					min = tmp;
-					manClicked = cur.index;
+				for (int i = 0; i < pl1_men.size(); i++) {
+					cur = pl1_men.get(i);
+					tmp = (cur.cenX - x) * (cur.cenX - x) + (cur.cenY - y)
+							* (cur.cenY - y);
+					if (tmp < min
+							&& tmp < Global.TOUCH_ERROR_THRESHOLD
+									* Global.TOUCH_ERROR_THRESHOLD) {
+						min = tmp;
+						manClicked = cur.index;
+					}
+				}
+
+				if (manClicked > 0 && manClicked != pac
+						&& manClicked - 1 == selectedMan
+						&& clickState == action) {
+					return;
+				}
+
+				if (manClicked > 0 && manClicked != pac) {
+					selectedMan = manClicked - 1;
+					clickState = action;
+				}
+			} else if (clickState == action) {
+				clickState = select;
+				Man man = pl1_men.get(selectedMan);
+
+				Point p = getPoint(x, y);
+				if (p != null) {
+					man.next = findPath((int) (man.cenY / cell_h),
+							(int) (man.cenX / cell_w), p.x, p.y);
+					if (man.next.length > 0) {
+						man.current_point_to_go = 1;
+						man.destX = (man.next[0].y - 1) * Global.CELL_WIDTH;
+						man.destY = (man.next[0].x - 1) * Global.CELL_HEIGHT;
+					}
 				}
 			}
+		} else {
 
-			if (manClicked > 0 && manClicked != pac
-					&& manClicked - 1 == selectedMan && clickState == action) {
-				return;
-			}
-
-			if (manClicked > 0 && manClicked != pac) {
-				selectedMan = manClicked - 1;
-				clickState = action;
-			}
-		} else if (clickState == action) {
-			clickState = select;
-			Man man = pl1_men.get(selectedMan);
-
-			Point p = getPoint(x, y);
-			if (p != null) {
-				man.next = findPath((int) (man.cenY / cell_h),
-						(int) (man.cenX / cell_w), p.x, p.y);
-				if (man.next.length > 0) {
-					man.current_point_to_go = 1;
-					man.destX = (man.next[0].y - 1) * Global.CELL_WIDTH;
-					man.destY = (man.next[0].x - 1) * Global.CELL_HEIGHT;
-				}
-			}
 		}
+	}
+
+	private void decode(String msg) {
+		byte[] xx = new byte[4];
+		for (int i = 0; i < 4; i++)
+			xx[i] = (byte) msg.charAt(i);
+		float x1 = ByteBuffer.wrap(xx).order(ByteOrder.LITTLE_ENDIAN)
+				.getFloat();
+		for (int i = 0; i < 4; i++)
+			xx[i] = (byte) msg.charAt(i + 4);
+		float y1 = ByteBuffer.wrap(xx).order(ByteOrder.LITTLE_ENDIAN)
+				.getFloat();
+
+	}
+
+	private String EncodeMsg(float x, float y) {
+		byte[] m = new byte[8];
+		int xx = Float.floatToRawIntBits(x);
+		int yy = Float.floatToRawIntBits(y);
+		for (int i = 0; i < 4; i++)
+			m[i] = (byte) ((xx >> (i * 8)) & 0xff);
+		for (int i = 0; i < 4; i++)
+			m[i + 4] = (byte) ((yy >> (i * 8)) & 0xff);
+		return new String(m);
 	}
 
 	public Point getPoint(float x, float y) {
@@ -214,22 +252,40 @@ public class GameState implements Runnable {
 
 	@Override
 	public void run() {
+		long currentTime = System.nanoTime();
+		long minFrameTime = 1000000000/framesPerSec;
 		while (true) {
+			long newTime = System.nanoTime();
+			long frameTime = newTime - currentTime;
+			currentTime = newTime;
+			
 			for (int i = 0; i < pl1_men.size(); i++) {
 				pl1_men.get(i).updateMe();
 				view.move_pacman(pl1_men.get(i).color,
 						(int) (pl1_men.get(i).x), (int) (pl1_men.get(i).y));
-
+				
 				// just test
 				// view.move_pacman(pl1_men.get(i).color, (int) (screen_w /
 				// 3.5),
 				// (int) (screen_h / 4.75));
 			}
-			try {
-				Thread.sleep(30);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+			/*
+			 // XXX NOT WORKING MESH 3AREF LEH !!!
+			if(frameTime<minFrameTime){
+				try {
+					Thread.sleep((minFrameTime-frameTime)/1000000);
+//					System.out.println((minFrameTime-frameTime)/1000000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
+			*/
+			
+//			try {
+//				Thread.sleep(30);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
 		}
 	}
 }

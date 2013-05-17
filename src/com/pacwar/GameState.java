@@ -31,6 +31,7 @@ public class GameState implements Runnable {
 	static boolean[][] vis = new boolean[map_h][map_w];
 	static float cell_w, cell_h;
 	static int curPlayer;
+	static int[] selectedMan;
 	String name;
 	Player[] players;
 	DownloadFilesTask d;
@@ -60,6 +61,8 @@ public class GameState implements Runnable {
 
 		players[0].state = select;
 		players[1].state = select;
+
+		selectedMan = new int[2];
 
 		initializePlayersMen();
 	}
@@ -192,8 +195,6 @@ public class GameState implements Runnable {
 		return ret;
 	}
 
-	int selectedMan;
-
 	public void SceneTouch(float x, float y, int player) {
 		try {
 			// TODO set the name variable
@@ -221,17 +222,18 @@ public class GameState implements Runnable {
 			}
 
 			if (manClicked > 0 && manClicked != pac
-					&& manClicked - 1 == selectedMan && players[player].state == action) {
+					&& manClicked - 1 == selectedMan[player]
+					&& players[player].state == action) {
 				return;
 			}
 
 			if (manClicked > 0 && manClicked != pac) {
-				selectedMan = manClicked - 1;
+				selectedMan[player] = manClicked - 1;
 				players[player].state = action;
 			}
 		} else if (players[player].state == action) {
 			players[player].state = select;
-			Man man = players[player].men.get(selectedMan);
+			Man man = players[player].men.get(selectedMan[player]);
 
 			Point p = getPoint(x, y);
 			if (p != null) {

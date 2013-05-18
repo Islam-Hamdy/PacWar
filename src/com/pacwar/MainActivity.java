@@ -125,7 +125,7 @@ public class MainActivity extends E3Activity {
 
 		pacManSprite[id][player].scale((float) (w * 1.0 / pac_w),
 				(float) (h * 1.0 / pac_h));
-		pacManSprite[id][player].move(x, y);
+		pacManSprite[id][player].move(pacman_shift_x + x, pacman_shift_y + y);
 		pacManSprite[id][player].setVisible(true);
 	}
 
@@ -143,7 +143,7 @@ public class MainActivity extends E3Activity {
 
 		ghostSprite[id][player].scale((float) (w * 1.0 / ghost_w),
 				(float) (h * 1.0 / ghost_h));
-		ghostSprite[id][player].move(x, y);
+		ghostSprite[id][player].move(ghost_shift_x + x, ghost_shift_y + y);
 		ghostSprite[id][player].setVisible(true);
 	}
 

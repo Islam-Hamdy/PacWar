@@ -23,7 +23,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-@SuppressLint("NewApi")
 public class Lobby extends Activity {
 	ArrayList<String> list = null;
 	Lobby t = this;
@@ -64,14 +63,6 @@ public class Lobby extends Activity {
 				System.out.println("+++++ " + position);
 				final String item = (String) parent.getItemAtPosition(position);
 				System.out.println(" _____  " + item);
-				view.animate().setDuration(2000).alpha(0)
-						.withEndAction(new Runnable() {
-							@Override
-							public void run() {
-								adapter.notifyDataSetChanged();
-								view.setAlpha(1);
-							}
-						});
 				hostName = item + "";
 				new DownloadFilesTask().execute(connect);
 				startIt();
@@ -228,15 +219,18 @@ public class Lobby extends Activity {
 					.getBytes());
 			os.close();
 			InputStream in = httpConn.getInputStream();
+			System.out.println("GET INPUTSTREAM");
 			byte[] buffer = new byte[1000];
 			int read;
 			String tmpstr = "";
 			while (connected) {
 				while ((read = in.read(buffer)) != -1) {
 					tmpstr = new String(buffer, 0, read);
-					decode(tmpstr);
-					MainActivity.model
-							.SceneTouch(x, y, 1 - GameState.curPlayer);
+					if (!tmpstr.contains("successfully")) {
+						decode(tmpstr);
+						MainActivity.model.SceneTouch(x, y,
+								1 - GameState.curPlayer);
+					}
 				}
 				in.close();
 				in = reconnect();
@@ -307,6 +301,7 @@ public class Lobby extends Activity {
 			HttpURLConnection httpConn = (HttpURLConnection) url
 					.openConnection();
 			httpConn.setDoOutput(true);
+			System.setProperty("http.keepAlive", "false");
 			httpConn.setRequestMethod("POST");
 			httpConn.connect();
 			OutputStream os = httpConn.getOutputStream();

@@ -23,7 +23,6 @@ public class MainActivity extends E3Activity {
 	private static int pacmans_no = Global.PAC_INIT;
 	private static int ghosts_no = Global.GHOST_INIT;
 
-	@SuppressWarnings("unchecked")
 	private void initializeGame() throws IOException {
 		int bgwidth = 164, bgheight = 212;
 		Sprite bg = new Sprite(new TiledTexture("bg.png", bgwidth, bgheight,
@@ -37,13 +36,13 @@ public class MainActivity extends E3Activity {
 		int centerY = (getHeight() - pacman_texture.getTileHeight()) / 2;
 
 		// Add animation frames from tile.
-		ArrayList<AnimatedSprite.Frame>pacman_frames = new ArrayList<AnimatedSprite.Frame>();
+		ArrayList<AnimatedSprite.Frame> pacman_frames = new ArrayList<AnimatedSprite.Frame>();
 
 		pacman_frames = new ArrayList<AnimatedSprite.Frame>();
 		pacman_frames.add(new AnimatedSprite.Frame(2, 0));
 		pacman_frames.add(new AnimatedSprite.Frame(1, 0));
 		pacman_frames.add(new AnimatedSprite.Frame(0, 0));
-		
+
 		pacManSprite = new AnimatedSprite[pacmans_no];
 		for (int i = 0; i < pacmans_no; i++) {
 
@@ -170,7 +169,7 @@ public class MainActivity extends E3Activity {
 				// position of the actual device.
 				int x = getTouchEventX(scene, motionEvent);
 				int y = getTouchEventY(scene, motionEvent);
-				model.SceneTouch(x, y,GameState.curPlayer);
+				model.SceneTouch(x, y, GameState.curPlayer);
 				// pacManSprite.move(x, y);
 
 				// In order to stop the animation, just call stop() method like

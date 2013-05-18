@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -18,12 +19,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+@SuppressLint("NewApi")
 public class Lobby extends Activity {
 	ArrayList<String> list = null;
 	Lobby t = this;
@@ -36,9 +36,8 @@ public class Lobby extends Activity {
 		final ListView listview = (ListView) findViewById(R.id.listview);
 
 		try {
-			DownloadFilesTask d = new DownloadFilesTask();
 			done = false;
-			d.execute(0);
+			new DownloadFilesTask().execute(0);
 			while (!done)
 				;
 
@@ -74,8 +73,7 @@ public class Lobby extends Activity {
 							}
 						});
 				hostName = item + "";
-				DownloadFilesTask d = new DownloadFilesTask();
-				d.execute(connect);
+				new DownloadFilesTask().execute(connect);
 				startIt();
 			}
 		});
@@ -137,15 +135,17 @@ public class Lobby extends Activity {
 				if (f[0] == getHostList)
 					getList();
 				else {
-					unregister();
-					register();
 					if (f[0] == connect) {
+						unregister();
+						register();
 						connect();
 					} else if (f[0] == disconnect)
 						disconnect();
 					else if (f[0] == sendMessage) {
 						sendMessage();
 					} else if (f[0] == host) {
+						unregister();
+						register();
 						host();
 					}
 				}
@@ -322,7 +322,7 @@ public class Lobby extends Activity {
 					tmpstr = new String(buffer, 0, read);
 					if (tmpstr.contains("connected")) {
 						joined = true;
-					} else if(joined){
+					} else if (joined) {
 						decode(tmpstr);
 						MainActivity.model.SceneTouch(x, y,
 								1 - GameState.curPlayer);

@@ -4,13 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
-
-import com.pacwar.Lobby.DownloadFilesTask;
 
 import android.content.res.AssetManager;
 import android.graphics.Point;
@@ -20,7 +15,7 @@ public class GameState implements Runnable {
 	static int ghosts = 2, pacmans = 2;
 	static int map_w = Global.MAP_WIDTH, map_h = Global.MAP_HEIGHT;
 	float screen_w, screen_h;
-	static int framesPerSec = 40;
+	static int framesPerSec = 20;
 	// men 1,2,3,4,5,6...
 	// player1 +ve, player2 -ve
 	static final int block = 0;
@@ -34,12 +29,10 @@ public class GameState implements Runnable {
 	static int[] selectedMan;
 	String name;
 	Player[] players;
-	DownloadFilesTask d;
 
 	public GameState(MainActivity mainActivity) throws IOException {
 		view = mainActivity;
 		init(Global.SCREEN_WIDTH, Global.SCREEN_HEIGHT);
-		d = new Lobby().new DownloadFilesTask();
 		new Thread(this).start();
 	}
 
@@ -199,8 +192,7 @@ public class GameState implements Runnable {
 		try {
 			// TODO set the name variable
 			Lobby.message = EncodeMsg(x, y);
-			d.execute(Lobby.sendMessage);
-			// sendMessage(name, EncodeMsg(x, y));
+			new Lobby().new DownloadFilesTask().execute(Lobby.sendMessage);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -310,12 +302,14 @@ public class GameState implements Runnable {
 					// (int) (screen_h / 4.75));
 				}
 			}
-			/*
-			 * // XXX NOT WORKING MESH 3AREF LEH !!! if(frameTime<minFrameTime){
-			 * try { Thread.sleep((minFrameTime-frameTime)/1000000); //
-			 * System.out.println((minFrameTime-frameTime)/1000000); } catch
-			 * (InterruptedException e) { e.printStackTrace(); } }
-			 */
+
+			// XXX NOT WORKING MESH 3AREF LEH !!! if(frameTime<minFrameTime){
+			try {
+				if (minFrameTime - frameTime > 0)
+					Thread.sleep((minFrameTime - frameTime) / 1000000); //
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 
 			// try {
 			// Thread.sleep(30);

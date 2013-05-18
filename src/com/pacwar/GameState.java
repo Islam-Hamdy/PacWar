@@ -99,7 +99,7 @@ public class GameState implements Runnable {
 		pm2.cenY = (pm2.y + 1.5f * cell_h);
 		pm2.type = Global.PACMAN_TYPE;
 		players[1].addMan(pm2);
-		view.show_pacman(1, 1, (int) pm2.x, (int) pm2.y, (int) cell_w * 3,
+		view.show_pacman(0, 1, (int) pm2.x, (int) pm2.y, (int) cell_w * 3,
 				(int) cell_h * 3);
 
 		// ghost 2
@@ -113,7 +113,7 @@ public class GameState implements Runnable {
 		pm22.cenY = (pm22.y + 1.5f * cell_h);
 		pm22.type = Global.GHOST_TYPE;
 		players[1].addMan(pm22);
-		view.show_ghost(1, 1, (int) pm22.x, (int) pm22.y, (int) cell_w * 3,
+		view.show_ghost(0, 1, (int) pm22.x, (int) pm22.y, (int) cell_w * 3,
 				(int) cell_h * 3);
 
 	}
@@ -189,13 +189,14 @@ public class GameState implements Runnable {
 	}
 
 	public void SceneTouch(float x, float y, int player) {
-		try {
-			// TODO set the name variable
-			Lobby.message = EncodeMsg(x, y);
-			new Lobby().new DownloadFilesTask().execute(Lobby.sendMessage);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		if (player == curPlayer)
+			try {
+				// TODO set the name variable
+				Lobby.message = EncodeMsg(x, y);
+				new Lobby().new DownloadFilesTask().execute(Lobby.sendMessage);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		if (players[player].state == select) {
 			int manClicked = pac;
 			float min = 1 << 27, tmp;
@@ -286,20 +287,21 @@ public class GameState implements Runnable {
 
 			for (int k = 0; k < 2; k++) {
 				for (int i = 0; i < players[k].men.size(); i++) {
+					float xx = players[k].men.get(i).x, yy = players[k].men
+							.get(i).y;
 					players[k].men.get(i).updateMe();
-					if (players[k].men.get(i).type == Global.PACMAN_TYPE)
-						view.move_pacman(players[k].men.get(i).color, k,
-								(int) (players[k].men.get(i).x),
-								(int) (players[k].men.get(i).y));
-					else
-						view.move_ghost(players[k].men.get(i).color, k,
-								(int) (players[k].men.get(i).x),
-								(int) (players[k].men.get(i).y));
-
-					// just test
-					// view.move_pacman(pl1_men.get(i).color, (int) (screen_w /
-					// 3.5),
-					// (int) (screen_h / 4.75));
+					float xx2 = players[k].men.get(i).x, yy2 = players[k].men
+							.get(i).y;
+					if (xx != xx2 || yy != yy2) {
+						if (players[k].men.get(i).type == Global.PACMAN_TYPE)
+							view.move_pacman(players[k].men.get(i).color, k,
+									(int) (players[k].men.get(i).x),
+									(int) (players[k].men.get(i).y));
+						else
+							view.move_ghost(players[k].men.get(i).color, k,
+									(int) (players[k].men.get(i).x),
+									(int) (players[k].men.get(i).y));
+					}
 				}
 			}
 

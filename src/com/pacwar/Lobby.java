@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -39,11 +38,6 @@ public class Lobby extends Activity {
 			new DownloadFilesTask().execute(0);
 			while (!done)
 				;
-
-			// list =new ArrayList<String>();
-			// list.add("7amada");
-			// list.add("7amo");
-			// list.add("gad el 5arouf");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -219,13 +213,11 @@ public class Lobby extends Activity {
 					.getBytes());
 			os.close();
 			InputStream in = httpConn.getInputStream();
-			System.out.println("GET INPUTSTREAM");
-			byte[] buffer = new byte[1000];
-			int read;
+			Scanner myScanner = new Scanner(in);
 			String tmpstr = "";
 			while (connected) {
-				while ((read = in.read(buffer)) != -1) {
-					tmpstr = new String(buffer, 0, read);
+				while (myScanner.hasNext()) {
+					tmpstr = myScanner.nextLine();
 					if (!tmpstr.contains("successfully")) {
 						decode(tmpstr);
 						MainActivity.model.SceneTouch(x, y,
@@ -233,7 +225,9 @@ public class Lobby extends Activity {
 					}
 				}
 				in.close();
+				myScanner.close();
 				in = reconnect();
+				myScanner = new Scanner(in);
 			}
 			in.close();
 			return tmpstr.contains("succsessfully");
@@ -309,12 +303,11 @@ public class Lobby extends Activity {
 			os.close();
 
 			InputStream in = httpConn.getInputStream();
-			byte[] buffer = new byte[1000];
-			int read;
+			Scanner myScanner = new Scanner(in);
 			String tmpstr = "";
 			while (connected) {
-				while ((read = in.read(buffer)) != -1) {
-					tmpstr = new String(buffer, 0, read);
+				while (myScanner.hasNext()) {
+					tmpstr = myScanner.nextLine();
 					if (tmpstr.contains("connected")) {
 						joined = true;
 					} else if (joined) {
@@ -322,11 +315,11 @@ public class Lobby extends Activity {
 						MainActivity.model.SceneTouch(x, y,
 								1 - GameState.curPlayer);
 					}
-					// TODO message received from remote
-					// TODO do something
 				}
+				myScanner.close();
 				in.close();
 				in = reconnect();
+				myScanner = new Scanner(in);
 			}
 			in.close();
 		}

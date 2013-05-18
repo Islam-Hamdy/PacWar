@@ -220,13 +220,11 @@ public class GameState implements Runnable {
 						manClicked = cur.index;
 					}
 				}
-
 				if (manClicked > 0 && manClicked != pac
 						&& manClicked - 1 == selectedMan
 						&& clickState == action) {
 					return;
 				}
-
 				if (manClicked > 0 && manClicked != pac) {
 					selectedMan = manClicked - 1;
 					clickState = action;

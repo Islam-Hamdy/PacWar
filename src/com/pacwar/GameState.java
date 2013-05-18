@@ -27,13 +27,13 @@ public class GameState implements Runnable {
 	static final int pac = 1 << 20;
 	static final int select = 0;
 	static final int action = 1;
-	int clickState = 0;
 	static boolean[][] map = new boolean[map_h][map_w];
 	static boolean[][] vis = new boolean[map_h][map_w];
 	static float cell_w, cell_h;
 	static int curPlayer;
+	static int[] selectedMan;
 	String name;
-	Player p1, p2;
+	Player[] players;
 	DownloadFilesTask d;
 
 	public GameState(MainActivity mainActivity) throws IOException {
@@ -55,11 +55,14 @@ public class GameState implements Runnable {
 
 		mapinit();
 
-		p1 = new Player();
-		p2 = new Player();
+		players = new Player[2];
+		players[0] = new Player();
+		players[1] = new Player();
 
-		p1.state = select;
-		p2.state = select;
+		players[0].state = select;
+		players[1].state = select;
+
+		selectedMan = new int[2];
 
 		initializePlayersMen();
 	}
@@ -75,7 +78,7 @@ public class GameState implements Runnable {
 		pm1.cenX = (pm1.x + 1.5f * cell_w);
 		pm1.cenY = (pm1.y + 1.5f * cell_h);
 		pm1.type = Global.PACMAN_TYPE;
-		p1.addMan(pm1);
+		players[0].addMan(pm1);
 		view.show_pacman(0, (int) pm1.x, (int) pm1.y, (int) cell_w * 3,
 				(int) cell_h * 3);
 
@@ -89,8 +92,8 @@ public class GameState implements Runnable {
 		pm11.cenX = (pm11.x + 1.5f * cell_w);
 		pm11.cenY = (pm11.y + 1.5f * cell_h);
 		pm11.type = Global.GHOST_TYPE;
-		p1.addMan(pm11);
-		view.show_pacman(0, (int) pm11.x, (int) pm11.y, (int) cell_w * 3,
+		players[0].addMan(pm11);
+		view.show_ghost(0, (int) pm11.x, (int) pm11.y, (int) cell_w * 3,
 				(int) cell_h * 3);
 
 		// Pac 2
@@ -102,8 +105,8 @@ public class GameState implements Runnable {
 		pm2.cenX = (pm2.x + 1.5f * cell_w);
 		pm2.cenY = (pm2.y + 1.5f * cell_h);
 		pm2.type = Global.PACMAN_TYPE;
-		p2.addMan(pm2);
-		view.show_pacman(0, (int) pm2.x, (int) pm2.y, (int) cell_w * 3,
+		players[1].addMan(pm2);
+		view.show_pacman(1, (int) pm2.x, (int) pm2.y, (int) cell_w * 3,
 				(int) cell_h * 3);
 
 		// ghost 2
@@ -116,8 +119,8 @@ public class GameState implements Runnable {
 		pm22.cenX = (pm22.x + 1.5f * cell_w);
 		pm22.cenY = (pm22.y + 1.5f * cell_h);
 		pm22.type = Global.GHOST_TYPE;
-		p2.addMan(pm22);
-		view.show_pacman(0, (int) pm22.x, (int) pm22.y, (int) cell_w * 3,
+		players[1].addMan(pm22);
+		view.show_ghost(1, (int) pm22.x, (int) pm22.y, (int) cell_w * 3,
 				(int) cell_h * 3);
 
 	}
@@ -192,64 +195,58 @@ public class GameState implements Runnable {
 		return ret;
 	}
 
-	int selectedMan;
-
 	public void SceneTouch(float x, float y, int player) {
-		if (player == curPlayer) {
-			try {
-				// TODO set the name variable
-				Lobby.message=EncodeMsg(x, y);
-				d.execute(Lobby.sendMessage);
-//				sendMessage(name, EncodeMsg(x, y));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			if (clickState == select) {
-				int manClicked = pac;
-				float min = 1 << 27, tmp;
-				Man cur;
+		try {
+			// TODO set the name variable
+			Lobby.message = EncodeMsg(x, y);
+			d.execute(Lobby.sendMessage);
+			// sendMessage(name, EncodeMsg(x, y));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (players[player].state == select) {
+			int manClicked = pac;
+			float min = 1 << 27, tmp;
+			Man cur;
 
-				for (int i = 0; i < p1.men.size(); i++) {
-					cur = p1.men.get(i);
-					tmp = (cur.cenX - x) * (cur.cenX - x) + (cur.cenY - y)
-							* (cur.cenY - y);
-					if (tmp < min
-							&& tmp < Global.TOUCH_ERROR_THRESHOLD
-									* Global.TOUCH_ERROR_THRESHOLD) {
-						min = tmp;
-						manClicked = cur.index;
-					}
-				}
-				if (manClicked > 0 && manClicked != pac
-						&& manClicked - 1 == selectedMan
-						&& clickState == action) {
-					return;
-				}
-				if (manClicked > 0 && manClicked != pac) {
-					selectedMan = manClicked - 1;
-					clickState = action;
-				}
-			} else if (clickState == action) {
-				clickState = select;
-				Man man = p1.men.get(selectedMan);
-
-				Point p = getPoint(x, y);
-				if (p != null) {
-					man.next = findPath((int) (man.cenY / cell_h),
-							(int) (man.cenX / cell_w), p.x, p.y);
-					if (man.next.length > 0) {
-						man.current_point_to_go = 1;
-						man.destX = (man.next[0].y - 1) * Global.CELL_WIDTH;
-						man.destY = (man.next[0].x - 1) * Global.CELL_HEIGHT;
-					}
+			for (int i = 0; i < players[player].men.size(); i++) {
+				cur = players[player].men.get(i);
+				tmp = (cur.cenX - x) * (cur.cenX - x) + (cur.cenY - y)
+						* (cur.cenY - y);
+				if (tmp < min
+						&& tmp < Global.TOUCH_ERROR_THRESHOLD
+								* Global.TOUCH_ERROR_THRESHOLD) {
+					min = tmp;
+					manClicked = cur.index;
 				}
 			}
-		} else {
 
+			if (manClicked > 0 && manClicked != pac
+					&& manClicked - 1 == selectedMan[player]
+					&& players[player].state == action) {
+				return;
+			}
+
+			if (manClicked > 0 && manClicked != pac) {
+				selectedMan[player] = manClicked - 1;
+				players[player].state = action;
+			}
+		} else if (players[player].state == action) {
+			players[player].state = select;
+			Man man = players[player].men.get(selectedMan[player]);
+
+			Point p = getPoint(x, y);
+			if (p != null) {
+				man.next = findPath((int) (man.cenY / cell_h),
+						(int) (man.cenX / cell_w), p.x, p.y);
+				if (man.next.length > 0) {
+					man.current_point_to_go = 1;
+					man.destX = (man.next[0].y - 1) * Global.CELL_WIDTH;
+					man.destY = (man.next[0].x - 1) * Global.CELL_HEIGHT;
+				}
+			}
 		}
 	}
-
-	
 
 	private String EncodeMsg(float x, float y) {
 		byte[] m = new byte[8];
@@ -295,34 +292,23 @@ public class GameState implements Runnable {
 			long frameTime = newTime - currentTime;
 			currentTime = newTime;
 
-			for (int i = 0; i < p1.men.size(); i++) {
-				p1.men.get(i).updateMe();
-				if (p1.men.get(i).type == Global.PACMAN_TYPE)
-					view.move_pacman(p1.men.get(i).color,
-							(int) (p1.men.get(i).x), (int) (p1.men.get(i).y));
-				else
-					view.move_ghost(p1.men.get(i).color,
-							(int) (p1.men.get(i).x), (int) (p1.men.get(i).y));
+			for (int k = 0; k < 2; k++) {
+				for (int i = 0; i < players[k].men.size(); i++) {
+					players[k].men.get(i).updateMe();
+					if (players[k].men.get(i).type == Global.PACMAN_TYPE)
+						view.move_pacman(players[k].men.get(i).color,
+								(int) (players[k].men.get(i).x),
+								(int) (players[k].men.get(i).y));
+					else
+						view.move_ghost(players[k].men.get(i).color,
+								(int) (players[k].men.get(i).x),
+								(int) (players[k].men.get(i).y));
 
-				// just test
-				// view.move_pacman(pl1_men.get(i).color, (int) (screen_w /
-				// 3.5),
-				// (int) (screen_h / 4.75));
-			}
-
-			for (int i = 0; i < p2.men.size(); i++) {
-				p2.men.get(i).updateMe();
-				if (p2.men.get(i).type == Global.PACMAN_TYPE)
-					view.move_pacman(p2.men.get(i).color,
-							(int) (p2.men.get(i).x), (int) (p2.men.get(i).y));
-				else
-					view.move_ghost(p2.men.get(i).color,
-							(int) (p2.men.get(i).x), (int) (p2.men.get(i).y));
-
-				// just test
-				// view.move_pacman(pl1_men.get(i).color, (int) (screen_w /
-				// 3.5),
-				// (int) (screen_h / 4.75));
+					// just test
+					// view.move_pacman(pl1_men.get(i).color, (int) (screen_w /
+					// 3.5),
+					// (int) (screen_h / 4.75));
+				}
 			}
 			/*
 			 * // XXX NOT WORKING MESH 3AREF LEH !!! if(frameTime<minFrameTime){

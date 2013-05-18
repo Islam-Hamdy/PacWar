@@ -242,14 +242,15 @@ public class GameState implements Runnable {
 	}
 
 	private String EncodeMsg(float x, float y) {
-		byte[] m = new byte[8];
-		int xx = Float.floatToRawIntBits(x);
-		int yy = Float.floatToRawIntBits(y);
-		for (int i = 0; i < 4; i++)
-			m[i] = (byte) ((xx >> (i * 8)) & 0xff);
-		for (int i = 0; i < 4; i++)
-			m[i + 4] = (byte) ((yy >> (i * 8)) & 0xff);
-		return new String(m);
+		return x + " " + y;
+		// byte[] m = new byte[8];
+		// int xx = Float.floatToRawIntBits(x);
+		// int yy = Float.floatToRawIntBits(y);
+		// for (int i = 0; i < 4; i++)
+		// m[i] = (byte) ((xx >> (i * 8)) & 0xff);
+		// for (int i = 0; i < 4; i++)
+		// m[i + 4] = (byte) ((yy >> (i * 8)) & 0xff);
+		// return new String(m);
 	}
 
 	public Point getPoint(float x, float y) {

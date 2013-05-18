@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
+import java.util.StringTokenizer;
 
 import android.app.Activity;
 import android.content.Context;
@@ -327,13 +328,18 @@ public class Lobby extends Activity {
 		private float x, y;
 
 		private void decode(String msg) {
-			byte[] xx = new byte[4];
-			for (int i = 0; i < 4; i++)
-				xx[i] = (byte) msg.charAt(i);
-			x = ByteBuffer.wrap(xx).order(ByteOrder.LITTLE_ENDIAN).getFloat();
-			for (int i = 0; i < 4; i++)
-				xx[i] = (byte) msg.charAt(i + 4);
-			y = ByteBuffer.wrap(xx).order(ByteOrder.LITTLE_ENDIAN).getFloat();
+			// byte[] xx = new byte[4];
+			// for (int i = 0; i < 4; i++)
+			// xx[i] = (byte) msg.charAt(i);
+			// x =
+			// ByteBuffer.wrap(xx).order(ByteOrder.LITTLE_ENDIAN).getFloat();
+			// for (int i = 0; i < 4; i++)
+			// xx[i] = (byte) msg.charAt(i + 4);
+			// y =
+			// ByteBuffer.wrap(xx).order(ByteOrder.LITTLE_ENDIAN).getFloat();
+			StringTokenizer tok = new StringTokenizer(msg);
+			x = Float.parseFloat(tok.nextToken());
+			y = Float.parseFloat(tok.nextToken());
 		}
 
 		boolean connected = false;

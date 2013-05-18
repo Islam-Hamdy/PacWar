@@ -16,10 +16,13 @@ import com.e3roid.drawable.texture.TiledTexture;
 public class MainActivity extends E3Activity {
 	public E3Scene scene;
 	public static GameState model;
-	private TiledTexture pacman_texture;
-	private AnimatedSprite pacManSprite[];
+
+	private AnimatedSprite pacManSprite[][];
 	private TiledTexture ghosts_texture;
-	private AnimatedSprite ghostSprite[];
+
+	private TiledTexture pacman_texture[];
+	private AnimatedSprite ghostSprite[][];
+
 	private static int pacmans_no = Global.PAC_INIT;
 	private static int ghosts_no = Global.GHOST_INIT;
 
@@ -32,9 +35,6 @@ public class MainActivity extends E3Activity {
 				(float) (getHeight() * 1.0 / bgheight));
 		scene.getTopLayer().add(bg);
 
-		int centerX = (getWidth() - pacman_texture.getTileWidth()) / 2;
-		int centerY = (getHeight() - pacman_texture.getTileHeight()) / 2;
-
 		// Add animation frames from tile.
 		ArrayList<AnimatedSprite.Frame> pacman_frames = new ArrayList<AnimatedSprite.Frame>();
 
@@ -43,31 +43,42 @@ public class MainActivity extends E3Activity {
 		pacman_frames.add(new AnimatedSprite.Frame(1, 0));
 		pacman_frames.add(new AnimatedSprite.Frame(0, 0));
 
-		pacManSprite = new AnimatedSprite[pacmans_no];
+		pacManSprite = new AnimatedSprite[pacmans_no][2];
 		for (int i = 0; i < pacmans_no; i++) {
+			pacManSprite[i][0] = new AnimatedSprite(pacman_texture[0], 0, 0);
+			pacManSprite[i][0].animate(500, pacman_frames);
+			scene.getTopLayer().add(pacManSprite[i][0]);
+			pacManSprite[i][0].setVisible(false);
 
-			pacManSprite[i] = new AnimatedSprite(pacman_texture, 0, 0);
-			// pacManSprite[i].scale(1, 1);
-			// Start animation with 500msec, infinite loop.
-			pacManSprite[i].animate(500, pacman_frames);
-			scene.getTopLayer().add(pacManSprite[i]);
-			pacManSprite[i].setVisible(false);
+			pacManSprite[i][1] = new AnimatedSprite(pacman_texture[1], 0, 0);
+			pacManSprite[i][1].animate(500, pacman_frames);
+			scene.getTopLayer().add(pacManSprite[i][1]);
+			pacManSprite[i][1].setVisible(false);
 		}
 
 		ArrayList<AnimatedSprite.Frame> frames2 = new ArrayList<AnimatedSprite.Frame>();
-		frames2.add(new AnimatedSprite.Frame(0, 4));
-		frames2.add(new AnimatedSprite.Frame(1, 4));
-		frames2.add(new AnimatedSprite.Frame(2, 4));
-		frames2.add(new AnimatedSprite.Frame(3, 4));
+		frames2.add(new AnimatedSprite.Frame(0, 1));
+		frames2.add(new AnimatedSprite.Frame(1, 1));
+		frames2.add(new AnimatedSprite.Frame(2, 1));
+		frames2.add(new AnimatedSprite.Frame(3, 1));
 
-		ghostSprite = new AnimatedSprite[ghosts_no];
+		ArrayList<AnimatedSprite.Frame> frames3 = new ArrayList<AnimatedSprite.Frame>();
+		frames3.add(new AnimatedSprite.Frame(0, 2));
+		frames3.add(new AnimatedSprite.Frame(1, 2));
+		frames3.add(new AnimatedSprite.Frame(2, 2));
+		frames3.add(new AnimatedSprite.Frame(3, 2));
+
+		ghostSprite = new AnimatedSprite[ghosts_no][2];
 		for (int i = 0; i < ghosts_no; i++) {
-			ghostSprite[i] = new AnimatedSprite(ghosts_texture, centerX,
-					centerY);
-			// ghostSprite[i].scale(2, 2);
-			ghostSprite[i].animate(500, frames2);
-			scene.getTopLayer().add(ghostSprite[i]);
-			ghostSprite[i].setVisible(false);
+			ghostSprite[i][0] = new AnimatedSprite(ghosts_texture, 0, 0);
+			ghostSprite[i][0].animate(500, frames2);
+			scene.getTopLayer().add(ghostSprite[i][0]);
+			ghostSprite[i][0].setVisible(false);
+
+			ghostSprite[i][1] = new AnimatedSprite(ghosts_texture, 0, 0);
+			ghostSprite[i][1].animate(500, frames3);
+			scene.getTopLayer().add(ghostSprite[i][1]);
+			ghostSprite[i][1].setVisible(false);
 		}
 
 		scene.setBackgroundColor(0.94f, 1.00f, 0.94f, 1);
@@ -108,40 +119,40 @@ public class MainActivity extends E3Activity {
 	private int pacman_shift_x, pacman_shift_y;
 	private int ghost_shift_x, ghost_shift_y;
 
-	public void show_pacman(int color, int x, int y, int w, int h) {
+	public void show_pacman(int id, int player, int x, int y, int w, int h) {
 		pacman_shift_x = (int) Math.round(w / 2.0 - pac_w / 2.0);
 		pacman_shift_y = (int) Math.round(h / 2.0 - pac_h / 2.0);
 
-		pacManSprite[color].scale((float) (w * 1.0 / pac_w),
+		pacManSprite[id][player].scale((float) (w * 1.0 / pac_w),
 				(float) (h * 1.0 / pac_h));
-		pacManSprite[color].move(x, y);
-		pacManSprite[color].setVisible(true);
+		pacManSprite[id][player].move(x, y);
+		pacManSprite[id][player].setVisible(true);
 	}
 
-	public void hide_pacman(int color) {
-		pacManSprite[color].setVisible(false);
+	public void hide_pacman(int id, int player) {
+		pacManSprite[id][player].setVisible(false);
 	}
 
-	public void move_pacman(int color, int x, int y) {
-		pacManSprite[color].move(pacman_shift_x + x, pacman_shift_y + y);
+	public void move_pacman(int id, int player, int x, int y) {
+		pacManSprite[id][player].move(pacman_shift_x + x, pacman_shift_y + y);
 	}
 
-	public void show_ghost(int color, int x, int y, int w, int h) {
+	public void show_ghost(int id, int player, int x, int y, int w, int h) {
 		ghost_shift_x = (int) Math.round(w / 2.0 - ghost_w / 2.0);
 		ghost_shift_y = (int) Math.round(h / 2.0 - ghost_h / 2.0);
 
-		ghostSprite[color].scale((float) (w * 1.0 / ghost_w),
+		ghostSprite[id][player].scale((float) (w * 1.0 / ghost_w),
 				(float) (h * 1.0 / ghost_h));
-		ghostSprite[color].move(x, y);
-		ghostSprite[color].setVisible(true);
+		ghostSprite[id][player].move(x, y);
+		ghostSprite[id][player].setVisible(true);
 	}
 
-	public void hide_ghost(int color) {
-		ghostSprite[color].setVisible(false);
+	public void hide_ghost(int id, int player) {
+		ghostSprite[id][player].setVisible(false);
 	}
 
-	public void move_ghost(int color, int x, int y) {
-		ghostSprite[color].move(ghost_shift_x + x, ghost_shift_y + y);
+	public void move_ghost(int id, int player, int x, int y) {
+		ghostSprite[id][player].move(ghost_shift_x + x, ghost_shift_y + y);
 	}
 
 	int pac_w = 36, pac_h = 37;
@@ -155,8 +166,13 @@ public class MainActivity extends E3Activity {
 		// border, margin, context)
 		ghosts_texture = new TiledTexture("ghosts.png", ghost_w, ghost_h, 0, 0,
 				0, 0, this);
-		pacman_texture = new TiledTexture("pacman.png", pac_w, pac_h, 0, 0, 0,
-				0, this);
+
+		pacman_texture = new TiledTexture[2];
+
+		pacman_texture[0] = new TiledTexture("pacman.png", pac_w, pac_h, 0, 0,
+				0, 0, this);
+		pacman_texture[1] = new TiledTexture("pacman2.png", pac_w, pac_h, 0, 0,
+				0, 0, this);
 	}
 
 	@Override

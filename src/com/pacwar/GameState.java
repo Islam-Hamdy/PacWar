@@ -91,29 +91,29 @@ public class GameState implements Runnable {
 
 		// Pac 2
 		Man pm2 = new Man();
-		pm2.x = Global.CELL_WIDTH - cell_w - (3 * cell_w);
-		pm2.y = Global.CELL_HEIGHT - cell_h - (3 * cell_h);
+		pm2.x = Global.SCREEN_WIDTH - cell_w - (3 * cell_w);
+		pm2.y = Global.SCREEN_HEIGHT - cell_h - (3 * cell_h);
 		pm2.destX = pm2.x;
 		pm2.destY = pm2.y;
 		pm2.cenX = (pm2.x + 1.5f * cell_w);
 		pm2.cenY = (pm2.y + 1.5f * cell_h);
 		pm2.type = Global.PACMAN_TYPE;
 		players[1].addMan(pm2);
-		view.show_pacman(1, (int) pm2.x, (int) pm2.y, (int) cell_w * 3,
+		view.show_pacman(0, (int) pm2.x, (int) pm2.y, (int) cell_w * 3,
 				(int) cell_h * 3);
 
 		// ghost 2
 
 		Man pm22 = new Man();
 		pm22.x = pm2.x - (3 * cell_w);
-		pm22.y = cell_h;
+		pm22.y = pm2.y;
 		pm22.destX = pm22.x;
 		pm22.destY = pm22.y;
 		pm22.cenX = (pm22.x + 1.5f * cell_w);
 		pm22.cenY = (pm22.y + 1.5f * cell_h);
 		pm22.type = Global.GHOST_TYPE;
 		players[1].addMan(pm22);
-		view.show_ghost(1, (int) pm22.x, (int) pm22.y, (int) cell_w * 3,
+		view.show_ghost(0, (int) pm22.x, (int) pm22.y, (int) cell_w * 3,
 				(int) cell_h * 3);
 
 	}

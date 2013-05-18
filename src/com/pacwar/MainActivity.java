@@ -114,7 +114,7 @@ public class MainActivity extends E3Activity {
 
 		pacManSprite[color].scale((float) (w * 1.0 / pac_w),
 				(float) (h * 1.0 / pac_h));
-		pacManSprite[color].move(100, 100);
+		pacManSprite[color].move(x, y);
 		pacManSprite[color].setVisible(true);
 	}
 
@@ -126,7 +126,7 @@ public class MainActivity extends E3Activity {
 		pacManSprite[color].move(pacman_shift_x + x, pacman_shift_y + y);
 	}
 
-	public void show_ghost(int color, int x, int h, int w, int y) {
+	public void show_ghost(int color, int x, int y, int w, int h) {
 		ghost_shift_x = (int) Math.round(w / 2.0 - ghost_w / 2.0);
 		ghost_shift_y = (int) Math.round(h / 2.0 - ghost_h / 2.0);
 

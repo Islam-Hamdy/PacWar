@@ -370,32 +370,29 @@ public class GameState implements Runnable {
 							view.move_ghost(players[k].men.get(i).color, k,
 									(int) (players[k].men.get(i).x),
 									(int) (players[k].men.get(i).y));
-							boolean gameEnded = testScore(
-									(k + 1) % 2,
-									getPoint(players[k].men.get(i).cenX,
-											players[k].men.get(i).cenY),
-									players[k].men.get(i).type);
-							if (gameEnded) {
-								if (k == curPlayer) {
-									view.runOnUiThread(new Runnable() {
-										public void run() {
-											Toast.makeText(view, "You Win !!!",
-													Global.TOAST_DURATION)
-													.show();
-										}
-									});
-								} else {
-									view.runOnUiThread(new Runnable() {
-										public void run() {
-											Toast.makeText(view,
-													"You Lose !!!",
-													Global.TOAST_DURATION)
-													.show();
-										}
-									});
-								}
-								view.finish();
+						}
+						boolean gameEnded = testScore(
+								(k + 1) % 2,
+								getPoint(players[k].men.get(i).cenX,
+										players[k].men.get(i).cenY),
+								players[k].men.get(i), k);
+						if (gameEnded) {
+							if (k == curPlayer) {
+								view.runOnUiThread(new Runnable() {
+									public void run() {
+										Toast.makeText(view, "You Win !!!",
+												Global.TOAST_DURATION).show();
+									}
+								});
+							} else {
+								view.runOnUiThread(new Runnable() {
+									public void run() {
+										Toast.makeText(view, "You Lose !!!",
+												Global.TOAST_DURATION).show();
+									}
+								});
 							}
+							view.finish();
 						}
 					}
 				}
@@ -417,14 +414,22 @@ public class GameState implements Runnable {
 		}
 	}
 
-	private boolean testScore(int index, Point point, int playerType) {
-		for (int i = 0; i < players[index].men.size(); i++) {
-			Man current = players[index].men.get(i);
+	private boolean testScore(int otherIndex, Point point, Man caller,
+			int callerIndex) {
+		for (int i = 0; i < players[otherIndex].men.size(); i++) {
+			Man current = players[otherIndex].men.get(i);
 			if (getPoint(current.x, current.y).equals(point)) {
-				if (current.type == Global.PACMAN_TYPE) {
-					view.hide_pacman(current.color, index);
-					players[(index + 1) % 2].score++;
-					boolean status = players[index].losePacMan(i);
+				if (current.type != caller.type) {
+					boolean status = false;
+					if (current.type == Global.GHOST_TYPE) {
+						view.hide_pacman(caller.color, callerIndex);
+						players[otherIndex].score++;
+						status = players[callerIndex].losePacMan(i);
+					} else {
+						view.hide_pacman(current.color, otherIndex);
+						players[callerIndex].score++;
+						status = players[otherIndex].losePacMan(i);
+					}
 					if (status) {
 						return true;
 					}

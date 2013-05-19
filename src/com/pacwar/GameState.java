@@ -375,7 +375,7 @@ public class GameState implements Runnable {
 								(k + 1) % 2,
 								getPoint(players[k].men.get(i).cenX,
 										players[k].men.get(i).cenY),
-								players[k].men.get(i), k);
+								players[k].men.get(i), k, i);
 						if (gameEnded) {
 							if (k == curPlayer) {
 								view.runOnUiThread(new Runnable() {
@@ -415,7 +415,7 @@ public class GameState implements Runnable {
 	}
 
 	private boolean testScore(int otherIndex, Point point, Man caller,
-			int callerIndex) {
+			int callerIndex, int callerManIndex) {
 		for (int i = 0; i < players[otherIndex].men.size(); i++) {
 			Man current = players[otherIndex].men.get(i);
 			if (getPoint(current.x, current.y).equals(point)) {
@@ -424,7 +424,8 @@ public class GameState implements Runnable {
 					if (current.type == Global.GHOST_TYPE) {
 						view.hide_pacman(caller.color, callerIndex);
 						players[otherIndex].score++;
-						status = players[callerIndex].losePacMan(i);
+						status = players[callerIndex]
+								.losePacMan(callerManIndex);
 					} else {
 						view.hide_pacman(current.color, otherIndex);
 						players[callerIndex].score++;

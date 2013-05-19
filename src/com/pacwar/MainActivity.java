@@ -175,16 +175,21 @@ public class MainActivity extends E3Activity {
 				0, 0, this);
 	}
 
+	private int prevX = -1, prevY = -1;
+
 	@Override
 	public boolean onSceneTouchEvent(E3Scene scene, MotionEvent motionEvent) {
 		if (pacManSprite != null && model != null) {
 			if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+				if (prevX == getTouchEventX(scene, motionEvent)
+						&& prevY == getTouchEventY(scene, motionEvent))
+					return true;
 				// x and y must be adjusted to scene's screen position by
 				// scene.getSceneEventX,Y
 				// because MotionEvent's getX() and getY() returns pixel
 				// position of the actual device.
-				int x = getTouchEventX(scene, motionEvent);
-				int y = getTouchEventY(scene, motionEvent);
+				int x = prevX = getTouchEventX(scene, motionEvent);
+				int y = prevY = getTouchEventY(scene, motionEvent);
 				model.SceneTouch(x, y, GameState.curPlayer);
 				// pacManSprite.move(x, y);
 
@@ -196,5 +201,4 @@ public class MainActivity extends E3Activity {
 
 		return false;
 	}
-
 }

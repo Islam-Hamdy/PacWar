@@ -371,31 +371,61 @@ public class GameState implements Runnable {
 									(int) (players[k].men.get(i).x),
 									(int) (players[k].men.get(i).y));
 						}
-						boolean gameEnded = testScore(
-								(k + 1) % 2,
-								getPoint(players[k].men.get(i).cenX,
-										players[k].men.get(i).cenY),
-								players[k].men.get(i), k, i);
-						if (gameEnded) {
-							if (k == curPlayer) {
-								view.runOnUiThread(new Runnable() {
-									public void run() {
-										Toast.makeText(view, "You Win !!!",
-												Global.TOAST_DURATION).show();
-									}
-								});
-							} else {
-								view.runOnUiThread(new Runnable() {
-									public void run() {
-										Toast.makeText(view, "You Lose !!!",
-												Global.TOAST_DURATION).show();
-									}
-								});
+					}
+				}
+			}
+
+			boolean gameEnded = false;
+			int lastMan = -1;
+
+			outer: for (int i = 0; i < players[0].men.size(); i++) {
+				Man man0 = players[0].men.get(i);
+				Point p0 = getPoint(man0.cenX, man0.cenY);
+				for (int j = 0; j < players[1].men.size(); j++) {
+					Man man1 = players[1].men.get(j);
+					Point p1 = getPoint(man1.cenX, man1.cenY);
+					if (p0.equals(p1) && man0.type != man1.type) {
+						if (man0.type == Global.GHOST_TYPE) {// player 0 eats
+																// player 1
+							view.hide_pacman(man1.color, 1);
+							players[0].score++;
+							if (players[1].losePacMan(j)) {
+								gameEnded = true;
+								lastMan = 0;
+								break outer;
 							}
-							view.finish();
+							j--;
+						} else { // player 1 eats player 0
+							view.hide_pacman(man0.color, 0);
+							players[1].score++;
+							if (players[0].losePacMan(i)) {
+								gameEnded = true;
+								lastMan = 1;
+								break outer;
+							}
+							i--;
+							break;
 						}
 					}
 				}
+			}
+			if (gameEnded) {
+				if (lastMan == curPlayer) {
+					view.runOnUiThread(new Runnable() {
+						public void run() {
+							Toast.makeText(view, "You Win !!!",
+									Global.TOAST_DURATION).show();
+						}
+					});
+				} else {
+					view.runOnUiThread(new Runnable() {
+						public void run() {
+							Toast.makeText(view, "You Lose !!!",
+									Global.TOAST_DURATION).show();
+						}
+					});
+				}
+				view.finish();
 			}
 
 			// XXX NOT WORKING MESH 3AREF LEH !!! if(frameTime<minFrameTime){
@@ -412,32 +442,5 @@ public class GameState implements Runnable {
 			// e.printStackTrace();
 			// }
 		}
-	}
-
-	private boolean testScore(int otherIndex, Point point, Man caller,
-			int callerIndex, int callerManIndex) {
-		for (int i = 0; i < players[otherIndex].men.size(); i++) {
-			Man current = players[otherIndex].men.get(i);
-			if (getPoint(current.x, current.y).equals(point)) {
-				if (current.type != caller.type) {
-					boolean status = false;
-					if (current.type == Global.GHOST_TYPE) {
-						view.hide_pacman(caller.color, callerIndex);
-						players[otherIndex].score++;
-						status = players[callerIndex]
-								.losePacMan(callerManIndex);
-					} else {
-						view.hide_pacman(current.color, otherIndex);
-						players[callerIndex].score++;
-						status = players[otherIndex].losePacMan(i);
-					}
-					if (status) {
-						return true;
-					}
-					i--;
-				}
-			}
-		}
-		return false;
 	}
 }

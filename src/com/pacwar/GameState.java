@@ -28,7 +28,7 @@ public class GameState implements Runnable {
 	static boolean[][] vis = new boolean[map_h][map_w];
 	static float cell_w, cell_h;
 	static int curPlayer;
-	static int[] selectedMan;
+	static Man[] selectedMan;
 	String name;
 	Player[] players;
 
@@ -57,7 +57,7 @@ public class GameState implements Runnable {
 		players[0].state = select;
 		players[1].state = select;
 
-		selectedMan = new int[2];
+		selectedMan = new Man[2];
 
 		initializePlayersMen();
 	}
@@ -263,7 +263,7 @@ public class GameState implements Runnable {
 				e.printStackTrace();
 			}
 		if (players[player].state == select) {
-			int manClicked = pac;
+			Man manClicked = null;
 			float min = 1 << 27, tmp;
 			Man cur;
 
@@ -275,23 +275,23 @@ public class GameState implements Runnable {
 						&& tmp < Global.TOUCH_ERROR_THRESHOLD
 								* Global.TOUCH_ERROR_THRESHOLD) {
 					min = tmp;
-					manClicked = cur.index;
+					manClicked = cur;
 				}
 			}
 
-			if (manClicked > 0 && manClicked != pac
-					&& manClicked - 1 == selectedMan[player]
+			if (/* manClicked > 0 && */manClicked != null
+					&& manClicked.equals(selectedMan[player])
 					&& players[player].state == action) {
 				return;
 			}
 
-			if (manClicked > 0 && manClicked != pac) {
-				selectedMan[player] = manClicked - 1;
+			if (/* manClicked > 0 && */manClicked != null) {
+				selectedMan[player] = manClicked;
 				players[player].state = action;
 			}
 		} else if (players[player].state == action) {
 			players[player].state = select;
-			Man man = players[player].men.get(selectedMan[player]);
+			Man man = selectedMan[player];
 			System.out.println("Selected Man = " + selectedMan[player]);
 			System.out.println("Man updated : " + man.type + " -- " + man.x);
 			System.out.println(players[player].men.size());

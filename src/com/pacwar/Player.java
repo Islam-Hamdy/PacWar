@@ -21,4 +21,12 @@ public class Player {
 		}
 	}
 
+	public boolean loseMan(int index) {
+		if (men_counter > 0) {
+			men.remove(index);
+			men_counter--;
+		}
+		return men_counter <= 0;
+	}
+
 }

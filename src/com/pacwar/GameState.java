@@ -7,8 +7,10 @@ import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Point;
+import android.widget.Toast;
 
 public class GameState implements Runnable {
 	public static MainActivity view;
@@ -336,7 +338,7 @@ public class GameState implements Runnable {
 					return new Point(nx, ny);
 			}
 		}
-		return null; // if we are here then a7a :|
+		return null;
 	}
 
 	public void changeScreenSize(int sizeX, int sizeY) {
@@ -360,14 +362,38 @@ public class GameState implements Runnable {
 					float xx2 = players[k].men.get(i).x, yy2 = players[k].men
 							.get(i).y;
 					if (xx != xx2 || yy != yy2) {
-						if (players[k].men.get(i).type == Global.PACMAN_TYPE)
+						if (players[k].men.get(i).type == Global.PACMAN_TYPE) {
 							view.move_pacman(players[k].men.get(i).color, k,
 									(int) (players[k].men.get(i).x),
 									(int) (players[k].men.get(i).y));
-						else
+						} else {
 							view.move_ghost(players[k].men.get(i).color, k,
 									(int) (players[k].men.get(i).x),
 									(int) (players[k].men.get(i).y));
+						}
+						boolean gameEnded = testScore(
+								(k + 1) % 2,
+								getPoint(players[k].men.get(i).cenX,
+										players[k].men.get(i).cenY),
+								players[k].men.get(i).type);
+						if (gameEnded) {
+							if (k == curPlayer) {
+								view.runOnUiThread(new Runnable() {
+									public void run() {
+										Toast.makeText(view, "You Win !!!",
+												Global.TOAST_DURATION).show();
+									}
+								});
+							} else {
+								view.runOnUiThread(new Runnable() {
+									public void run() {
+										Toast.makeText(view, "You Lose !!!",
+												Global.TOAST_DURATION).show();
+									}
+								});
+							}
+							view.finish();
+						}
 					}
 				}
 			}
@@ -386,5 +412,26 @@ public class GameState implements Runnable {
 			// e.printStackTrace();
 			// }
 		}
+	}
+
+	private boolean testScore(int index, Point point, int playerType) {
+		for (int i = 0; i < players[index].men.size(); i++) {
+			Man current = players[index].men.get(i);
+			if (getPoint(current.x, current.y).equals(point)) {
+				if (current.type != playerType) {
+					if (current.type == Global.GHOST_TYPE)
+						view.hide_ghost(current.color, index);
+					else
+						view.hide_pacman(current.color, index);
+					players[(index + 1) % 2].score++;
+					boolean status = players[index].loseMan(i);
+					if (status) {
+						return true;
+					}
+					i--;
+				}
+			}
+		}
+		return false;
 	}
 }

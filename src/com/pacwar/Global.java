@@ -13,5 +13,6 @@ public class Global {
 	public static final int PACMAN_TYPE = 0;
 	public static final int GHOST_TYPE = 1;
 	public static float TOUCH_ERROR_THRESHOLD;
+	public static final int TOAST_DURATION = 300;
 
 }

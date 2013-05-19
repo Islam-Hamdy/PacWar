@@ -89,6 +89,34 @@ public class GameState implements Runnable {
 		view.show_ghost(0, 0, (int) pm11.x, (int) pm11.y, (int) cell_w * 3,
 				(int) cell_h * 3);
 
+		// Pac 12
+		Man pm12 = new Man();
+		pm12.x = Global.SCREEN_WIDTH - cell_w - (3 * cell_w);
+		pm12.y = cell_h;
+		pm12.destX = pm12.x;
+		pm12.destY = pm12.y;
+		pm12.cenX = (pm12.x + 1.5f * cell_w);
+		pm12.cenY = (pm12.y + 1.5f * cell_h);
+		pm12.type = Global.PACMAN_TYPE;
+		players[0].addMan(pm12);
+		view.show_pacman(1, 0, (int) pm12.x, (int) pm12.y, (int) cell_w * 3,
+				(int) cell_h * 3);
+
+		// ghost 1
+
+		Man pm122 = new Man();
+		pm122.x = pm12.x - (3 * cell_w);
+		pm122.y = cell_h;
+		pm122.destX = pm122.x;
+		pm122.destY = pm122.y;
+		pm122.cenX = (pm122.x + 1.5f * cell_w);
+		pm122.cenY = (pm122.y + 1.5f * cell_h);
+		pm122.type = Global.GHOST_TYPE;
+		players[0].addMan(pm122);
+		view.show_ghost(1, 0, (int) pm122.x, (int) pm122.y, (int) cell_w * 3,
+				(int) cell_h * 3);
+		// _______________________Player 2___________________________________
+
 		// Pac 2
 		Man pm2 = new Man();
 		pm2.x = Global.SCREEN_WIDTH - cell_w - (3 * cell_w);
@@ -114,6 +142,33 @@ public class GameState implements Runnable {
 		pm22.type = Global.GHOST_TYPE;
 		players[1].addMan(pm22);
 		view.show_ghost(0, 1, (int) pm22.x, (int) pm22.y, (int) cell_w * 3,
+				(int) cell_h * 3);
+
+		// Pac 2
+		Man pm21 = new Man();
+		pm21.x = cell_w;
+		pm21.y = Global.SCREEN_HEIGHT - cell_h - (3 * cell_h);
+		pm21.destX = pm21.x;
+		pm21.destY = pm21.y;
+		pm21.cenX = (pm21.x + 1.5f * cell_w);
+		pm21.cenY = (pm21.y + 1.5f * cell_h);
+		pm21.type = Global.PACMAN_TYPE;
+		players[1].addMan(pm21);
+		view.show_pacman(1, 1, (int) pm21.x, (int) pm21.y, (int) cell_w * 3,
+				(int) cell_h * 3);
+
+		// ghost 2
+
+		Man pm222 = new Man();
+		pm222.x = pm21.x + (3 * cell_w);
+		pm222.y = pm21.y;
+		pm222.destX = pm222.x;
+		pm222.destY = pm222.y;
+		pm222.cenX = (pm222.x + 1.5f * cell_w);
+		pm222.cenY = (pm222.y + 1.5f * cell_h);
+		pm222.type = Global.GHOST_TYPE;
+		players[1].addMan(pm222);
+		view.show_ghost(1, 1, (int) pm222.x, (int) pm222.y, (int) cell_w * 3,
 				(int) cell_h * 3);
 
 	}
@@ -227,6 +282,9 @@ public class GameState implements Runnable {
 		} else if (players[player].state == action) {
 			players[player].state = select;
 			Man man = players[player].men.get(selectedMan[player]);
+			System.out.println("Selected Man = "+selectedMan[player]);
+			System.out.println("Man updated : "+man.type+" -- "+man.x);
+			System.out.println(players[player].men.size());
 
 			Point p = getPoint(x, y);
 			if (p != null) {

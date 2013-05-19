@@ -337,9 +337,13 @@ public class Lobby extends Activity {
 			// xx[i] = (byte) msg.charAt(i + 4);
 			// y =
 			// ByteBuffer.wrap(xx).order(ByteOrder.LITTLE_ENDIAN).getFloat();
-			StringTokenizer tok = new StringTokenizer(msg);
-			x = Float.parseFloat(tok.nextToken());
-			y = Float.parseFloat(tok.nextToken());
+			try {
+				StringTokenizer tok = new StringTokenizer(msg);
+				x = Float.parseFloat(tok.nextToken());
+				y = Float.parseFloat(tok.nextToken());
+			} catch (Exception e) {
+				//
+			}
 		}
 
 		boolean connected = false;

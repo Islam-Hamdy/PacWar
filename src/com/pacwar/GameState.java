@@ -71,6 +71,7 @@ public class GameState implements Runnable {
 		pm1.cenX = (pm1.x + 1.5f * cell_w);
 		pm1.cenY = (pm1.y + 1.5f * cell_h);
 		pm1.type = Global.PACMAN_TYPE;
+		pm1.color = 0;
 		players[0].addMan(pm1);
 		view.show_pacman(0, 0, (int) pm1.x, (int) pm1.y, (int) cell_w * 3,
 				(int) cell_h * 3);
@@ -85,6 +86,7 @@ public class GameState implements Runnable {
 		pm11.cenX = (pm11.x + 1.5f * cell_w);
 		pm11.cenY = (pm11.y + 1.5f * cell_h);
 		pm11.type = Global.GHOST_TYPE;
+		pm11.color = 0;
 		players[0].addMan(pm11);
 		view.show_ghost(0, 0, (int) pm11.x, (int) pm11.y, (int) cell_w * 3,
 				(int) cell_h * 3);
@@ -98,6 +100,7 @@ public class GameState implements Runnable {
 		pm12.cenX = (pm12.x + 1.5f * cell_w);
 		pm12.cenY = (pm12.y + 1.5f * cell_h);
 		pm12.type = Global.PACMAN_TYPE;
+		pm12.color = 1;
 		players[0].addMan(pm12);
 		view.show_pacman(1, 0, (int) pm12.x, (int) pm12.y, (int) cell_w * 3,
 				(int) cell_h * 3);
@@ -112,6 +115,7 @@ public class GameState implements Runnable {
 		pm122.cenX = (pm122.x + 1.5f * cell_w);
 		pm122.cenY = (pm122.y + 1.5f * cell_h);
 		pm122.type = Global.GHOST_TYPE;
+		pm122.color = 1;
 		players[0].addMan(pm122);
 		view.show_ghost(1, 0, (int) pm122.x, (int) pm122.y, (int) cell_w * 3,
 				(int) cell_h * 3);
@@ -126,6 +130,7 @@ public class GameState implements Runnable {
 		pm2.cenX = (pm2.x + 1.5f * cell_w);
 		pm2.cenY = (pm2.y + 1.5f * cell_h);
 		pm2.type = Global.PACMAN_TYPE;
+		pm2.color = 0;
 		players[1].addMan(pm2);
 		view.show_pacman(0, 1, (int) pm2.x, (int) pm2.y, (int) cell_w * 3,
 				(int) cell_h * 3);
@@ -140,6 +145,7 @@ public class GameState implements Runnable {
 		pm22.cenX = (pm22.x + 1.5f * cell_w);
 		pm22.cenY = (pm22.y + 1.5f * cell_h);
 		pm22.type = Global.GHOST_TYPE;
+		pm22.color = 0;
 		players[1].addMan(pm22);
 		view.show_ghost(0, 1, (int) pm22.x, (int) pm22.y, (int) cell_w * 3,
 				(int) cell_h * 3);
@@ -153,6 +159,7 @@ public class GameState implements Runnable {
 		pm21.cenX = (pm21.x + 1.5f * cell_w);
 		pm21.cenY = (pm21.y + 1.5f * cell_h);
 		pm21.type = Global.PACMAN_TYPE;
+		pm21.color = 1;
 		players[1].addMan(pm21);
 		view.show_pacman(1, 1, (int) pm21.x, (int) pm21.y, (int) cell_w * 3,
 				(int) cell_h * 3);
@@ -167,6 +174,7 @@ public class GameState implements Runnable {
 		pm222.cenX = (pm222.x + 1.5f * cell_w);
 		pm222.cenY = (pm222.y + 1.5f * cell_h);
 		pm222.type = Global.GHOST_TYPE;
+		pm222.color = 1;
 		players[1].addMan(pm222);
 		view.show_ghost(1, 1, (int) pm222.x, (int) pm222.y, (int) cell_w * 3,
 				(int) cell_h * 3);
@@ -282,8 +290,8 @@ public class GameState implements Runnable {
 		} else if (players[player].state == action) {
 			players[player].state = select;
 			Man man = players[player].men.get(selectedMan[player]);
-			System.out.println("Selected Man = "+selectedMan[player]);
-			System.out.println("Man updated : "+man.type+" -- "+man.x);
+			System.out.println("Selected Man = " + selectedMan[player]);
+			System.out.println("Man updated : " + man.type + " -- " + man.x);
 			System.out.println(players[player].men.size());
 
 			Point p = getPoint(x, y);

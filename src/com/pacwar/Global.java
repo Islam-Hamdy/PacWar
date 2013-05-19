@@ -14,5 +14,7 @@ public class Global {
 	public static final int GHOST_TYPE = 1;
 	public static float TOUCH_ERROR_THRESHOLD;
 	public static final int TOAST_DURATION = 300;
-
+	public static float otherWidth;
+	public static float otherHeight;
+	
 }

@@ -292,6 +292,7 @@ public class GameState implements Runnable {
 		} else if (players[player].state == action) {
 			players[player].state = select;
 			Man man = selectedMan[player];
+			
 			System.out.println("Selected Man = " + selectedMan[player]);
 			System.out.println("Man updated : " + man.type + " -- " + man.x);
 			System.out.println(players[player].men.size());

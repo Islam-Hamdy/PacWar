@@ -125,6 +125,9 @@ public class Lobby extends Activity {
 						unregister();
 						register();
 						connect();
+						message = Global.SCREEN_WIDTH + " "
+								+ Global.SCREEN_HEIGHT;
+						sendMessage();
 					} else if (f[0] == disconnect)
 						disconnect();
 					else if (f[0] == sendMessage) {
@@ -216,10 +219,22 @@ public class Lobby extends Activity {
 			InputStream in = httpConn.getInputStream();
 			Scanner myScanner = new Scanner(in);
 			String tmpstr = "";
+			boolean first = false;
 			while (connected) {
 				while (myScanner.hasNext()) {
 					tmpstr = myScanner.nextLine();
-					if (!tmpstr.contains("successfully")) {
+					if (!first && !tmpstr.contains("successfully")) {
+						first = true;
+						try {
+							StringTokenizer tok = new StringTokenizer(tmpstr);
+							Global.otherWidth = Float.parseFloat(tok
+									.nextToken());
+							Global.otherHeight = Float.parseFloat(tok
+									.nextToken());
+						} catch (Exception e) {
+							//
+						}
+					} else if (!tmpstr.contains("successfully")) {
 						decode(tmpstr);
 						MainActivity.model.SceneTouch(x, y,
 								1 - GameState.curPlayer);
@@ -306,11 +321,26 @@ public class Lobby extends Activity {
 			InputStream in = httpConn.getInputStream();
 			Scanner myScanner = new Scanner(in);
 			String tmpstr = "";
+			boolean first = false;
 			while (connected) {
 				while (myScanner.hasNext()) {
 					tmpstr = myScanner.nextLine();
-					if (tmpstr.contains("connected")) {
+					if (!joined && tmpstr.contains("connected")) {
 						joined = true;
+						message = Global.SCREEN_WIDTH + " "
+								+ Global.SCREEN_HEIGHT;
+						sendMessage();
+					} else if (joined && !first) {
+						first = true;
+						try {
+							StringTokenizer tok = new StringTokenizer(tmpstr);
+							Global.otherWidth = Float.parseFloat(tok
+									.nextToken());
+							Global.otherHeight = Float.parseFloat(tok
+									.nextToken());
+						} catch (Exception e) {
+							//
+						}
 					} else if (joined) {
 						decode(tmpstr);
 						MainActivity.model.SceneTouch(x, y,
@@ -339,10 +369,11 @@ public class Lobby extends Activity {
 			// ByteBuffer.wrap(xx).order(ByteOrder.LITTLE_ENDIAN).getFloat();
 			try {
 				StringTokenizer tok = new StringTokenizer(msg);
-				x = Float.parseFloat(tok.nextToken());
-				y = Float.parseFloat(tok.nextToken());
+				x = Float.parseFloat(tok.nextToken())
+						* (Global.otherWidth / Global.SCREEN_WIDTH);
+				y = Float.parseFloat(tok.nextToken())
+						* (Global.otherHeight / Global.SCREEN_HEIGHT);
 			} catch (Exception e) {
-				//
 			}
 		}
 

@@ -7,10 +7,12 @@ public class Player {
 	ArrayList<Man> men;
 	int men_counter;
 	int state;
+	int pac_counter;
 
 	public Player() {
 		men = new ArrayList<Man>();
 		men_counter = 0;
+		pac_counter = 0;
 	}
 
 	public void addMan(Man man) {
@@ -18,15 +20,18 @@ public class Player {
 			men.add(man);
 			men_counter++;
 			man.index = men_counter;
+			if (man.type == Global.PACMAN_TYPE)
+				pac_counter++;
 		}
 	}
 
-	public boolean loseMan(int index) {
+	public boolean losePacMan(int index) {
 		if (men_counter > 0) {
 			men.remove(index);
 			men_counter--;
+			pac_counter--;
 		}
-		return men_counter <= 0;
+		return pac_counter <= 0;
 	}
 
 }

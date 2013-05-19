@@ -125,9 +125,7 @@ public class Lobby extends Activity {
 						unregister();
 						register();
 						connect();
-						message = Global.SCREEN_WIDTH + " "
-								+ Global.SCREEN_HEIGHT;
-						sendMessage();
+						
 					} else if (f[0] == disconnect)
 						disconnect();
 					else if (f[0] == sendMessage) {
@@ -327,9 +325,6 @@ public class Lobby extends Activity {
 					tmpstr = myScanner.nextLine();
 					if (!joined && tmpstr.contains("connected")) {
 						joined = true;
-						message = Global.SCREEN_WIDTH + " "
-								+ Global.SCREEN_HEIGHT;
-						sendMessage();
 					} else if (joined && !first) {
 						first = true;
 						try {

@@ -35,6 +35,15 @@ public class GameState implements Runnable {
 	public GameState(MainActivity mainActivity) throws IOException {
 		view = mainActivity;
 		init(Global.SCREEN_WIDTH, Global.SCREEN_HEIGHT);
+		
+		Lobby.message = Global.SCREEN_WIDTH + " "
+				+ Global.SCREEN_HEIGHT;
+		try {
+			new Lobby().new DownloadFilesTask().sendMessage();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		new Thread(this).start();
 	}
 

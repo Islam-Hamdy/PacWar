@@ -39,7 +39,7 @@ public class GameState implements Runnable {
 		Lobby.message = Global.SCREEN_WIDTH + " "
 				+ Global.SCREEN_HEIGHT;
 		try {
-			new Lobby().new DownloadFilesTask().sendMessage();
+			new Lobby().new DownloadFilesTask().execute(Lobby.sendMessage);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
